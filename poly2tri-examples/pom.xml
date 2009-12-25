@@ -1,0 +1,216 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.poly2tri-examples</groupId>
+  <artifactId>poly2tri-examples</artifactId>
+  <name>poly2tri-examples</name>
+  <version>0.1.0-SNAPSHOT</version>
+  
+    
+  <properties>
+  	<lwjgl.version>2.1.0</lwjgl.version>
+  </properties>    
+
+
+  <parent>
+  	<artifactId>poly2tri-core</artifactId>
+  	<groupId>org.poly2tri</groupId>
+  	<version>0.1.0-SNAPSHOT</version>
+  </parent>
+  
+  
+  <profiles>
+  	<profile>
+  		<id>windows</id>
+  		<activation>
+  			<activeByDefault>true</activeByDefault>
+  		</activation>
+  		<properties>
+  			<build.type>windows</build.type>
+	</properties>
+  	</profile>
+  	<profile>
+  		<id>linux</id>
+  		<properties>
+  			<build.type>linux</build.type>
+	</properties>
+  	</profile>
+  	<profile>
+  		<id>macosx</id>
+  		<properties>
+  			<build.type>macosx</build.type>
+	</properties>
+  	</profile>
+  	<profile>
+  		<id>solaris</id>
+  		<properties>
+  			<build.type>solaris</build.type>
+	</properties>
+  	</profile>
+  </profiles>
+
+
+  <repositories>
+  	<repository>
+  		<id>Ardor3D-releases</id>
+  		<name>Ardor3D-releases</name>
+  		<url>http://ardor3d.com:8081/nexus/content/repositories/releases</url>
+  	</repository>
+  	<repository>
+  		<id>Project-local</id>
+  		<name>Project-local</name>
+  		<url>file://${project.basedir}/repository</url>
+  	</repository>
+  </repositories>
+
+
+  <dependencies>
+    <dependency>
+      <groupId>org.poly2tri-ardor3d</groupId>
+      <artifactId>poly2tri-ardor3d</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+ 	<dependency>
+ 		<groupId>com.ardor3d</groupId>
+ 		<artifactId>ardor3d-examples</artifactId>
+ 		<version>0.6</version>
+  <!--  We only need ExampleBase so no need for following artifacts -->
+ 		<exclusions>
+ 			<exclusion> 			
+		 		<groupId>com.ardor3d</groupId>
+		 		<artifactId>ardor3d-jogl</artifactId>
+ 			</exclusion>
+ 			<exclusion> 			
+		 		<groupId>com.ardor3d</groupId>
+		 		<artifactId>ardor3d-swt</artifactId>
+ 			</exclusion>
+ 			<exclusion> 			
+		 		<groupId>com.ardor3d</groupId>
+		 		<artifactId>ardor3d-animation</artifactId>
+ 			</exclusion>
+ 			<exclusion> 			
+		 		<groupId>com.ardor3d</groupId>
+		 		<artifactId>ardor3d-ui</artifactId>
+ 			</exclusion>
+ 			<exclusion> 			
+		 		<groupId>com.ardor3d</groupId>
+		 		<artifactId>ardor3d-effects</artifactId>
+ 			</exclusion>
+ 		</exclusions>
+ 	</dependency>
+ 	<dependency>
+ 		<groupId>com.ardor3d</groupId>
+ 		<artifactId>ardor3d-collada</artifactId>
+ 		<version>0.6</version>
+ 	</dependency>
+  </dependencies>
+  <developers>
+  	<developer>
+  		<id>obi</id>
+  		<name>Thomas Åhlén</name>
+  		<email>thahlen@gmail.com</email>
+  	</developer>
+  </developers>
+  
+  <build>
+  	<defaultGoal>compile</defaultGoal>
+  	<directory>target</directory>
+  	<finalName>Poly2Tri</finalName>
+  	<sourceDirectory>src/main/java</sourceDirectory>
+  	<testSourceDirectory>src/test/java</testSourceDirectory>
+  	<plugins>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-compiler-plugin</artifactId>
+			<configuration>
+				<source>${java.version}</source>
+				<target>${java.version}</target>
+
+ <!-- Exclude stuff thats still in development -->
+
+				<excludes> 
+					<exclude>org/poly2tri/polygon/*.*</exclude> 
+				</excludes>
+        	</configuration>
+		</plugin>
+		
+  <!--  http://maven.apache.org/plugins/maven-dependency-plugin/usage.html -->
+		<plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+       	<artifactId>maven-dependency-plugin</artifactId>
+	       	<executions>
+  <!-- http://maven.apache.org/plugins/maven-dependency-plugin/unpack-dependencies-mojo.html -->
+  <!-- unpack all 3dparty classes to one directory -->
+          	  <execution>
+            	<id>unpack-dependencies-classes</id>
+            	<phase>compile</phase>
+            	<goals>
+              	<goal>unpack-dependencies</goal>
+            	</goals>
+            	<configuration>
+            	   	<excludeGroupIds>org.poly2tri</excludeGroupIds>   
+    	          	<outputDirectory>${project.build.directory}/lib/classes</outputDirectory>
+					<type>jar</type>
+    	        </configuration>
+	          </execution>	 
+  <!-- unpack 3dparty natives, for this profile(windows is default) and given artifacts to one directory -->
+          	  <execution>
+            	<id>unpack-dependencies-natives</id>
+            	<phase>compile</phase>
+            	<goals>
+              	<goal>unpack-dependencies</goal>
+            	</goals>
+            	<configuration>
+            	   	<classifier>natives_${build.type}</classifier>  
+            	   	<includeArtifactIds>lwjgl</includeArtifactIds>   
+    	          	<outputDirectory>${project.build.directory}/lib/natives</outputDirectory>
+					<type>jar</type>
+    	        </configuration>
+	          </execution>	 
+    <!-- unpack 3dparty sources to one directory -->        	
+          	  <execution>
+            	<id>unpack-dependencies-sources</id>
+            	<phase>compile</phase>
+            	<goals>
+              	<goal>unpack-dependencies</goal>
+            	</goals>
+            	<configuration>
+	            	<classifier>sources</classifier>
+            	   	<excludeGroupIds>org.poly2tri</excludeGroupIds>   
+	            	<failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
+    	          	<outputDirectory>${project.build.directory}/lib/sources</outputDirectory>
+        		    <silent>true</silent>
+					<type>jar</type>
+    	        </configuration>
+	          </execution>	         	         	
+	        </executions>
+     	</plugin>
+
+  <!--  http://maven.apache.org/plugins/maven-source-plugin/ -->        
+        <plugin>
+  			<groupId>org.apache.maven.plugins</groupId>
+  			<artifactId>maven-source-plugin</artifactId>
+  			<executions>
+    		<execution>
+      			<id>attach-sources</id>
+      			<goals>
+        			<goal>jar</goal>
+      			</goals>
+    		</execution>
+  			</executions>
+		</plugin>
+  <!--  http://maven.apache.org/plugins/maven-javadoc-plugin/ -->        
+        <plugin>
+  			<groupId>org.apache.maven.plugins</groupId>
+  			<artifactId>maven-javadoc-plugin</artifactId>
+  			<executions>
+    		<execution>
+      			<id>attach-javadoc</id>
+      			<goals>
+        			<goal>jar</goal>
+      			</goals>
+    		</execution>
+  			</executions>
+		</plugin>    	
+    </plugins>
+  </build>
+</project>

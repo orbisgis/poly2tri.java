@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" path="src/main/resources"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="target/lib/classes" sourcepath="target/lib/sources">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="org.poly2tri-examples/target/lib/natives"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/poly2tri-ardor3d/target/classes"/>
+	<classpathentry kind="lib" path="/poly2tri-core/target/classes"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>

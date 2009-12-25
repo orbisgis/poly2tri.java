@@ -1,3 +1,9 @@
 
 syntax: regexp
 ^target$
+syntax: regexp
+^poly2tri-ardor3d/target$
+syntax: regexp
+^poly2tri-core/target$
+syntax: regexp
+^poly2tri-examples/target$

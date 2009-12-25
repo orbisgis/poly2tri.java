@@ -1,0 +1,121 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.poly2tri</groupId>
+  <artifactId>poly2tri-core</artifactId>
+  <name>Poly2Tri</name>
+  <version>0.1.0-SNAPSHOT</version>
+  <description>Delaunay Triangulation Library</description>
+  <packaging>jar</packaging>
+  <url>http://code.google.com/p/poly2tri/</url>
+
+  <licenses>
+    <license>
+      <name>New BSD License</name>
+      <url>LICENSE.txt</url>
+    </license>
+  </licenses>
+
+  <developers>
+  	<developer>
+  		<id>obi</id>
+  		<name>Thomas Åhlén</name>
+  		<email>thahlen@gmail.com</email>
+  	</developer>
+  </developers>
+  
+  
+  <dependencies>
+  	<dependency>
+  		<groupId>org.slf4j</groupId>
+  		<artifactId>slf4j-jdk14</artifactId>
+  		<version>1.5.10</version>
+  	</dependency>
+  </dependencies>
+
+ <scm>
+  <connection>scm:hg:https://java.poly2tri.googlecode.com/hg/poly2tri-core</connection>
+  <developerConnection>scm:hg:https://java.poly2tri.googlecode.com/hg/poly2tri-core</developerConnection>
+  <url>http://code.google.com/p/poly2tri/source/browse?repo=java</url>
+ </scm>
+
+ <issueManagement>
+ 	<url>http://code.google.com/p/poly2tri/issues/list</url>
+ </issueManagement>
+
+  <build>
+  	<sourceDirectory>src/main/java</sourceDirectory>
+    <plugins>
+
+   <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-scm-plugin</artifactId>
+    <configuration>
+     <goals>install</goals>
+    </configuration>
+   </plugin>
+
+  <!--  http://maven.apache.org/plugins/maven-dependency-plugin/usage.html -->
+		<plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+       	<artifactId>maven-dependency-plugin</artifactId>
+	       	<executions>
+  <!-- http://maven.apache.org/plugins/maven-dependency-plugin/unpack-dependencies-mojo.html -->
+  <!-- unpack all 3dparty classes to one directory -->
+          	  <execution>
+            	<id>unpack-dependencies-classes</id>
+            	<phase>compile</phase>
+            	<goals>
+              	<goal>unpack-dependencies</goal>
+            	</goals>
+            	<configuration>
+    	          	<outputDirectory>${project.build.directory}/lib/classes</outputDirectory>
+					<type>jar</type>
+    	        </configuration>
+	          </execution>	 
+  <!-- unpack 3dparty sources to one directory -->        	
+          	  <execution>
+            	<id>unpack-dependencies-sources</id>
+            	<phase>compile</phase>
+            	<goals>
+              	<goal>unpack-dependencies</goal>
+            	</goals>
+            	<configuration>
+	            	<classifier>sources</classifier>
+	            	<failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
+    	          	<outputDirectory>${project.build.directory}/lib/sources</outputDirectory>
+        		    <silent>true</silent>
+					<type>jar</type>
+    	        </configuration>
+	          </execution>	         	         	
+	        </executions>
+     	</plugin>
+     	
+  <!--  http://maven.apache.org/plugins/maven-source-plugin/ -->        
+        <plugin>
+  			<groupId>org.apache.maven.plugins</groupId>
+  			<artifactId>maven-source-plugin</artifactId>
+  			<executions>
+    		<execution>
+      			<id>attach-sources</id>
+      			<goals>
+        			<goal>jar</goal>
+      			</goals>
+    		</execution>
+  			</executions>
+		</plugin>
+  <!--  http://maven.apache.org/plugins/maven-javadoc-plugin/ -->        
+        <plugin>
+  			<groupId>org.apache.maven.plugins</groupId>
+  			<artifactId>maven-javadoc-plugin</artifactId>
+  			<executions>
+    		<execution>
+      			<id>attach-javadoc</id>
+      			<goals>
+        			<goal>jar</goal>
+      			</goals>
+    		</execution>
+  			</executions>
+		</plugin>    	
+    </plugins>
+  </build>
+</project>

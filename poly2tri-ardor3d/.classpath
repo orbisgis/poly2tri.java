@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src/main/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/poly2tri-core/target/classes"/>
+	<classpathentry kind="lib" path="/poly2tri-core/target/classes" sourcepath="/poly2tri-core/src/main/java"/>
 	<classpathentry kind="lib" path="target/lib/classes"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

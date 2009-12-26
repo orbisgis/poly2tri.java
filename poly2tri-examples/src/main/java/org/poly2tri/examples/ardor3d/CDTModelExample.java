@@ -65,7 +65,7 @@ public class CDTModelExample extends CDTExampleBase
     private int m_stepCount = 0;
     private boolean m_autoStep = true;
 
-    private final String m_dataPath = "src/main/resources/org/poly2tri/example/data/";
+    private final String m_dataPath = "src/main/resources/org/poly2tri/examples/data/";
     
     public static void main(final String[] args) 
     {
@@ -124,7 +124,7 @@ public class CDTModelExample extends CDTExampleBase
 //          m_node.attachChild( m_circumCircle.getSceneNode() );
         }
         
-        buildModel(ExampleModels.Debug2); 
+        buildModel(m_currentModel); 
         triangulate();
     }
     
@@ -259,6 +259,14 @@ public class CDTModelExample extends CDTExampleBase
             public void perform( final Canvas canvas, final TwoInputStates inputState, final double tpf )
             {
                 m_autoStep = m_autoStep ? false : true;
+            }
+        } ) );                  
+
+        // space - save triangle lines
+        _logicalLayer.registerTrigger( new InputTrigger( new KeyPressedCondition( Key.SPACE ), new TriggerAction() {
+            public void perform( final Canvas canvas, final TwoInputStates inputState, final double tpf )
+            {
+                PolygonLoader.saveTriLine( m_dataPath, _polygonSet ); 
             }
         } ) );                  
     }
@@ -588,34 +596,37 @@ public class CDTModelExample extends CDTExampleBase
         }        
     }
 
-    private ExampleModels m_currentModel = ExampleModels.Bird;
+    private ExampleModels m_currentModel = ExampleModels.Two;
 
     public enum ExampleModels
     {
-        Debug           ("debug.dat",1,0,0),
-        Debug2          ("debug2.dat",1,0,0),
-        Bird            ("bird.dat",1,0,0),
-        Custom          ("funny.dat",1,0,0),
-        Diamond         ("diamond.dat",1,0,0),
-        Dude            ("dude.dat",1,-0.1,0),
-        Nazca_heron     ("nazca_heron.dat",1.3,0,0.35),
-        Nazca_monkey    ("nazca_monkey.dat",1,0,0),
-        Star            ("star.dat",1,0,0),
-        Strange         ("strange.dat",1,0,0),
-        Tank            ("tank.dat",1.3,0,0);
+        Two             ("2.dat",1,0,0,true),
+        Debug           ("debug.dat",1,0,0,false),
+        Debug2          ("debug2.dat",1,0,0,false),
+        Bird            ("bird.dat",1,0,0,false),
+        Custom          ("funny.dat",1,0,0,false),
+        Diamond         ("diamond.dat",1,0,0,false),
+        Dude            ("dude.dat",1,-0.1,0,true),
+        Nazca_heron     ("nazca_heron.dat",1.3,0,0.35,false),
+        Nazca_monkey    ("nazca_monkey.dat",1,0,0,false),
+        Star            ("star.dat",1,0,0,false),
+        Strange         ("strange.dat",1,0,0,true),
+        Tank            ("tank.dat",1.3,0,0,true);
         
         private final static String m_basePath = "org/poly2tri/examples/data/"; 
         private String m_filename;
         private double m_scale;
         private double m_x;
         private double m_y;
+        private boolean _invertedYAxis;
         
-        ExampleModels( String filename, double scale, double x, double y )
+        ExampleModels( String filename, double scale, double x, double y, boolean invertedY )
         {
             m_filename = filename;
             m_scale = scale;
             m_x = x;
             m_y = y;
+            _invertedYAxis = invertedY;
         }
         
         public String getFilename()
@@ -636,6 +647,11 @@ public class CDTModelExample extends CDTExampleBase
         public double getY()
         {
             return m_y;
+        }
+
+        public boolean invertedYAxis()
+        {
+            return _invertedYAxis;
         }
     }
 

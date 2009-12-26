@@ -14,6 +14,8 @@ import org.poly2tri.examples.ardor3d.CDTModelExample.ExampleModels;
 import org.poly2tri.polygon.Polygon;
 import org.poly2tri.polygon.ardor3d.ArdorPolygon;
 import org.poly2tri.triangulation.TriangulationPoint;
+import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
+import org.poly2tri.triangulation.sets.PolygonSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +38,7 @@ public class PolygonLoader
         BufferedReader reader = new BufferedReader( ir );
         while( ( line = reader.readLine() ) != null )
         {
-            StringTokenizer tokens = new StringTokenizer( line, " " );
+            StringTokenizer tokens = new StringTokenizer( line, " ," );
             points.add( new Vector3( Float.valueOf( tokens.nextToken() ).floatValue(), 
                                      Float.valueOf( tokens.nextToken() ).floatValue(),
                                      0f ));
@@ -48,11 +50,23 @@ public class PolygonLoader
 
         // Rescale models so they are centered at 0,0 and don't fall outside the
         // unit square
+        
         double maxX, maxY, minX, minY;
         maxX = minX = points.get( 0 ).getX();
-        maxY = minY = points.get( 0 ).getY();
+        if( model.invertedYAxis() )
+        {
+            maxY = minY = -points.get( 0 ).getY();
+        }
+        else
+        {
+            maxY = minY = points.get( 0 ).getY();            
+        }
         for( Vector3 p : points )
         {
+            if( model.invertedYAxis() )
+            {
+                p.setY( -p.getY() );
+            }
             maxX = p.getX() > maxX ? p.getX() : maxX;
             maxY = p.getY() > maxY ? p.getY() : maxY;
             minX = p.getX() < minX ? p.getX() : minX;
@@ -70,7 +84,14 @@ public class PolygonLoader
 
         for( Vector3 p : points )
         {
-            p.subtractLocal( maxX - width / 2, maxY - height / 2, 0 );
+            if( model.invertedYAxis() )
+            {
+                p.subtractLocal( maxX - width / 2, maxY - height / 2, 0 );                
+            }
+            else
+            {
+                p.subtractLocal( maxX - width / 2, maxY - height / 2, 0 );                
+            }
             p.multiplyLocal( xScale < yScale ? xScale : yScale );
         }
         return new ArdorPolygon( points);
@@ -96,6 +117,58 @@ public class PolygonLoader
         catch( IOException e )
         {
             logger.error( "Failed to save model" );
+        }
+        finally
+        {
+            if( w != null )
+            {
+                try
+                {
+                    w.close();
+                }
+                catch( IOException e2 )
+                {                    
+                }
+            }
+        }
+    }
+
+    /**
+     * This is a very unoptimal dump of the triangles as absolute lines. 
+     * For manual importation to an SVG<br>
+     * 
+     * @param path
+     * @param ps
+     */
+    public static void saveTriLine( String path, PolygonSet ps )
+    {
+        FileWriter writer = null;
+        BufferedWriter w = null;
+        String file = path+System.currentTimeMillis()+".tri";
+        
+        if( ps.getTriangles() == null || ps.getTriangles().isEmpty() ) 
+        {
+            return;
+        }
+        
+        try
+        {
+            
+            writer = new FileWriter(file);
+            w = new BufferedWriter(writer);
+            for( DelaunayTriangle t : ps.getTriangles() )
+            {
+                for( int i=0; i<3; i++ )
+                {
+                    w.write( Float.toString( t.points[i].getXf() ) +","+ Float.toString( t.points[i].getYf() )+" ");                    
+                }
+//                w.newLine();
+            }
+            logger.info( "Saved triangle lines\n" + file );
+        }
+        catch( IOException e )
+        {
+            logger.error( "Failed to save triangle lines" + e.getMessage() );
         }
         finally
         {

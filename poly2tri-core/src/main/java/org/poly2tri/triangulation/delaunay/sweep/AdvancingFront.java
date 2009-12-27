@@ -96,7 +96,7 @@ public class AdvancingFront
         return null;
     }
     
-    public AdvancingFrontNode locatePoint( TriangulationPoint point )
+    public AdvancingFrontNode locatePoint( final TriangulationPoint point )
     {
         final double px = point.getX();
         AdvancingFrontNode node = findSearchNode(px);

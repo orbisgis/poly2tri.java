@@ -1,13 +1,13 @@
 package org.poly2tri.examples.ardor3d;
 
 import org.poly2tri.Poly2Tri;
+import org.poly2tri.examples.ardor3d.base.P2TSimpleExampleBase;
 import org.poly2tri.polygon.Polygon;
 import org.poly2tri.triangulation.point.TPoint;
 import org.poly2tri.triangulation.sets.PolygonSet;
 import org.poly2tri.triangulation.tools.ardor3d.ArdorMeshMapper;
 import org.poly2tri.triangulation.util.PolygonGenerator;
 
-import com.ardor3d.example.ExampleBase;
 import com.ardor3d.framework.FrameHandler;
 import com.ardor3d.input.logical.LogicalLayer;
 import com.ardor3d.math.ColorRGBA;
@@ -16,7 +16,7 @@ import com.ardor3d.scenegraph.Mesh;
 import com.ardor3d.scenegraph.hint.LightCombineMode;
 import com.google.inject.Inject;
 
-public class CDTSteinerPointExample extends ExampleBase
+public class CDTSteinerPointExample extends P2TSimpleExampleBase
 {
 
     public static void main(final String[] args) 
@@ -33,21 +33,18 @@ public class CDTSteinerPointExample extends ExampleBase
     @Override
     protected void initExample()
     {
+        super.initExample();
+        
         Polygon poly;
         PolygonSet ps;
         
-        _canvas.setVSyncEnabled( true );
-        
-        _root.getSceneHints().setLightCombineMode( LightCombineMode.Off );
-        _root.setRenderState( new WireframeState() );
-
         poly = createCirclePolygon( 1.5, 32 );
 
         // top left
         Mesh mesh = new Mesh();
         mesh.setDefaultColor( ColorRGBA.BLUE );
         mesh.setTranslation( -2, 2, 0 );
-        _root.attachChild( mesh );
+        _node.attachChild( mesh );
   
         ps = new PolygonSet( poly );
         Poly2Tri.triangulate( ps );
@@ -57,7 +54,7 @@ public class CDTSteinerPointExample extends ExampleBase
         mesh = new Mesh();
         mesh.setDefaultColor( ColorRGBA.RED );
         mesh.setTranslation( -2, -2, 0 );
-        _root.attachChild( mesh );
+        _node.attachChild( mesh );
 
         ps = new PolygonSet( poly );
         ps.addSteinerPoint( new TPoint(0,0) );
@@ -70,7 +67,7 @@ public class CDTSteinerPointExample extends ExampleBase
         mesh = new Mesh();
         mesh.setDefaultColor( ColorRGBA.BLUE );
         mesh.setTranslation( 2, 2, 0 );
-        _root.attachChild( mesh );
+        _node.attachChild( mesh );
 
         ps = new PolygonSet( poly );
         Poly2Tri.triangulate( ps );
@@ -80,7 +77,7 @@ public class CDTSteinerPointExample extends ExampleBase
         mesh = new Mesh();
         mesh.setDefaultColor( ColorRGBA.RED );
         mesh.setTranslation( 2, -2, 0 );
-        _root.attachChild( mesh );
+        _node.attachChild( mesh );
 
         ps = new PolygonSet( poly );
         ps.addSteinerPoint( new TPoint(0,0) );

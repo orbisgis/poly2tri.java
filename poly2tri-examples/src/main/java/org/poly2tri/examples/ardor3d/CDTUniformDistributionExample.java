@@ -3,13 +3,13 @@ package org.poly2tri.examples.ardor3d;
 import java.util.ArrayList;
 
 import org.poly2tri.Poly2Tri;
+import org.poly2tri.examples.ardor3d.base.P2TSimpleExampleBase;
 import org.poly2tri.triangulation.TriangulationPoint;
 import org.poly2tri.triangulation.point.TPoint;
 import org.poly2tri.triangulation.sets.ConstrainedPointSet;
 import org.poly2tri.triangulation.tools.ardor3d.ArdorMeshMapper;
 import org.poly2tri.triangulation.util.PointGenerator;
 
-import com.ardor3d.example.ExampleBase;
 import com.ardor3d.framework.FrameHandler;
 import com.ardor3d.input.logical.LogicalLayer;
 import com.ardor3d.math.ColorRGBA;
@@ -18,7 +18,7 @@ import com.ardor3d.scenegraph.Mesh;
 import com.ardor3d.scenegraph.hint.LightCombineMode;
 import com.google.inject.Inject;
 
-public class CDTUniformDistributionExample extends ExampleBase
+public class CDTUniformDistributionExample extends P2TSimpleExampleBase
 {
 
     public static void main(final String[] args) 
@@ -35,14 +35,11 @@ public class CDTUniformDistributionExample extends ExampleBase
     @Override
     protected void initExample()
     {       
-        _canvas.setVSyncEnabled( true );
-        
-        _root.getSceneHints().setLightCombineMode( LightCombineMode.Off );
-        _root.setRenderState( new WireframeState() );
+        super.initExample();
 
         Mesh mesh = new Mesh();
         mesh.setDefaultColor( ColorRGBA.BLUE );
-        _root.attachChild( mesh );
+        _node.attachChild( mesh );
   
         double scale = 100;
         int size = 1000;

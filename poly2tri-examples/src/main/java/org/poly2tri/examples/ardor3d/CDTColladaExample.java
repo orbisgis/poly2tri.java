@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.poly2tri.examples.ardor3d.base.P2TExampleBase;
 import org.poly2tri.examples.ardor3d.misc.MyPoint;
 import org.poly2tri.polygon.Polygon;
 import org.poly2tri.triangulation.TriangulationPoint;
@@ -36,7 +37,7 @@ import com.google.inject.Inject;
  * @author Thomas Åhlén, thahlen@gmail.com
  *
  */
-public class CDTColladaExample extends CDTExampleBase
+public class CDTColladaExample extends P2TExampleBase
 {
     public static void main(final String[] args) 
     {

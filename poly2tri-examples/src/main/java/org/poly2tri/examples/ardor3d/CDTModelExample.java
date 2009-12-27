@@ -3,6 +3,7 @@ package org.poly2tri.examples.ardor3d;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 
+import org.poly2tri.examples.ardor3d.base.P2TExampleBase;
 import org.poly2tri.examples.ardor3d.misc.PolygonLoader;
 import org.poly2tri.examples.ardor3d.misc.Triangle;
 import org.poly2tri.polygon.Polygon;
@@ -44,7 +45,7 @@ import com.google.inject.Inject;
  * @author Thomas
  *
  */
-public class CDTModelExample extends CDTExampleBase
+public class CDTModelExample extends P2TExampleBase
 {
     private final static Logger logger = LoggerFactory.getLogger( CDTModelExample.class );
     

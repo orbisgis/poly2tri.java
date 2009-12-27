@@ -39,6 +39,8 @@ public abstract class P2TSimpleExampleBase extends ExampleBase
     {
         _canvas.setVSyncEnabled( true );
 
+        _canvas.getCanvasRenderer().getCamera().setLocation(0, 0, 65);
+
         _width = Display.getDisplayMode().getWidth();
         _height = Display.getDisplayMode().getHeight();
         
@@ -48,7 +50,7 @@ public abstract class P2TSimpleExampleBase extends ExampleBase
         _node.getSceneHints().setLightCombineMode( LightCombineMode.Off );
         _node.setRenderState( new WireframeState() );
         _root.attachChild( _node );        
-
+        
         try {
             SimpleResourceLocator srl = new SimpleResourceLocator(ExampleBase.class.getClassLoader().getResource("org/poly2tri/examples/data/"));
             ResourceLocatorTool.addResourceLocator(ResourceLocatorTool.TYPE_MODEL, srl);

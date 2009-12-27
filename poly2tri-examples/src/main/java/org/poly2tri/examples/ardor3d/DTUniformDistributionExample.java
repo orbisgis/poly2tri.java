@@ -37,7 +37,7 @@ public class DTUniformDistributionExample extends P2TSimpleExampleBase
         mesh.setDefaultColor( ColorRGBA.BLUE );
         _node.attachChild( mesh );
   
-        PointSet ps = new PointSet( PointGenerator.uniformDistribution( 100, 50000 ) );
+        PointSet ps = new PointSet( PointGenerator.uniformDistribution( 60, 20000 ) );
         Poly2Tri.triangulate( ps );
         ArdorMeshMapper.updateTriangleMesh( mesh, ps );
     }

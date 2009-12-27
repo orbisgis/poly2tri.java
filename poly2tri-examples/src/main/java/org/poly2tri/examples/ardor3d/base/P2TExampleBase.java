@@ -63,9 +63,6 @@ public abstract class P2TExampleBase extends P2TSimpleExampleBase
         _node.attachChild( _cdtSweepPoints.getSceneNode() );        
         _node.attachChild( _cdtSweepMesh.getSceneNode() );        
         
-        _canvas.getCanvasRenderer().getCamera().setLocation(0, 0, 65);
-        
-
         final Node textNodes = new Node("Text");
         textNodes.getSceneHints().setRenderBucketType(RenderBucketType.Ortho);
         textNodes.getSceneHints().setLightCombineMode(LightCombineMode.Off);

@@ -37,6 +37,12 @@
   <developerConnection>scm:hg:https://java.poly2tri.googlecode.com/hg/poly2tri-core</developerConnection>
   <url>http://code.google.com/p/poly2tri/source/browse?repo=java</url>
  </scm>
+ <parent>
+ 	<artifactId>poly2tri</artifactId>
+ 	<groupId>org.poly2tri</groupId>
+ 	<version>0.1.0-SNAPSHOT</version>
+ 	<relativePath>../poly2tri/pom.xml</relativePath>
+ </parent>
 
  <issueManagement>
  	<url>http://code.google.com/p/poly2tri/issues/list</url>

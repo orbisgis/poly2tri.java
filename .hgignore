@@ -11,3 +11,7 @@ syntax: regexp
 ^\.externalToolBuilders$
 syntax: regexp
 ^\.settings$
+syntax: regexp
+^\.classpath$
+syntax: regexp
+^\.project$

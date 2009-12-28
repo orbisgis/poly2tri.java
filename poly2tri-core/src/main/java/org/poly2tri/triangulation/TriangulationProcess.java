@@ -37,6 +37,7 @@ import org.poly2tri.triangulation.TriangulationContext.TriangulationMode;
 import org.poly2tri.triangulation.delaunay.sweep.DTSweep;
 import org.poly2tri.triangulation.delaunay.sweep.DTSweepContext;
 import org.poly2tri.triangulation.sets.ConstrainedPointSet;
+import org.poly2tri.triangulation.sets.PointSet;
 import org.poly2tri.triangulation.sets.PolygonSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +60,11 @@ public class TriangulationProcess implements Runnable
     private long                 _timestamp = 0;
     private double               _triangulationTime = 0;
 
+    private boolean _awaitingTermination;
+    private boolean              _restart = false;
+    private TriangulationMode    _triangulationMode;
+    private PointSet             _pointSet;
+    
     public int getStepCount()
     {
         return _tcx.getStepCount();
@@ -95,11 +101,23 @@ public class TriangulationProcess implements Runnable
      * same data. Like when you when you want to do performance 
      * tests.
      */
-    public void triangulate()
+//    public void triangulate()
+//    {
+//        start();
+//    }
+    
+    /**
+     * Triangulate a PointSet with eventual constraints 
+     * 
+     * @param cps
+     */
+    public void triangulate( PointSet ps )
     {
+        _triangulationMode = TriangulationMode.DT;
+        _pointSet = ps;        
         start();
     }
-    
+
     /**
      * Triangulate a PointSet with eventual constraints 
      * 
@@ -107,9 +125,8 @@ public class TriangulationProcess implements Runnable
      */
     public void triangulate( ConstrainedPointSet cps )
     {
-        _tcx.clear();
-        _tcx.setTriangulationMode( TriangulationMode.CDT );
-        _tcx.setPointSet( cps );        
+        _triangulationMode = TriangulationMode.CDT;
+        _pointSet = cps;        
         start();
     }
     
@@ -120,24 +137,28 @@ public class TriangulationProcess implements Runnable
      */
     public void triangulate( PolygonSet ps )
     {
-        // TODO: handle if getting called during warmup or a triangulation 
-
-        _tcx.clear();
-        _tcx.setTriangulationMode( TriangulationMode.Polygon );
-        _tcx.setPointSet( ps );
+        _triangulationMode = TriangulationMode.Polygon;
+        _pointSet = ps;
         start();
     }
 
     private void start()
     {
-        if( _thread == null )
-        {
-            _thread = new Thread( this, _algorithm.name() + "." + _tcx.getTriangulationMode().name() );
-        }
-        if( _thread.getState() == State.NEW )
+        if( _thread == null || _thread.getState() == State.TERMINATED )
         {
             _isTerminated = false;
+            _tcx.clear();
+            _tcx.setTriangulationMode( _triangulationMode );
+            _tcx.setPointSet( _pointSet );
+            
+            _thread = new Thread( this, _algorithm.name() + "." + _triangulationMode );
             _thread.start();
+        }
+        else
+        {
+            // Triangulation already running. Terminate it so we can start a new
+            shutdown();
+            _restart = true;
         }
     }
 
@@ -168,8 +189,9 @@ public class TriangulationProcess implements Runnable
         }
         catch( RuntimeException e )
         {
-            if( _isTerminated )
+            if( _awaitingTermination )
             {
+                _awaitingTermination = false;
                 logger.info( "Thread[{}] : {}", _thread.getName(), e.getMessage() );
             }
             else
@@ -187,6 +209,13 @@ public class TriangulationProcess implements Runnable
             _timestamp = System.currentTimeMillis();
             _isTerminated = true;
             _thread = null;
+        }
+        
+        // Autostart a new triangulation?
+        if( _restart )
+        {
+            _restart = false;
+            start();
         }
     }
 
@@ -211,7 +240,7 @@ public class TriangulationProcess implements Runnable
 
     public void shutdown()
     {
-        _isTerminated = true;
+        _awaitingTermination = true;
         _tcx.terminateTriangulation();
         resume();
     }

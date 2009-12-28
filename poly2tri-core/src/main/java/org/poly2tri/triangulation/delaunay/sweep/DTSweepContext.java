@@ -30,7 +30,6 @@
  */
 package org.poly2tri.triangulation.delaunay.sweep;
 
-import java.util.ArrayList;
 import java.util.Collections;
 
 import org.poly2tri.triangulation.TriangulationContext;
@@ -45,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * @author Thomas Åhlén, thahlen@gmail.com
  *
  */
-public class DTSweepContext extends TriangulationContext
+public class DTSweepContext extends TriangulationContext<DTSweepDebugContext>
 {
     private final static Logger logger = LoggerFactory.getLogger( DTSweepContext.class );
 
@@ -53,12 +52,6 @@ public class DTSweepContext extends TriangulationContext
     // PointSet width to both left and right.
     private final float ALPHA = 0.3f;
 
-    /*
-     * 
-     */
-    protected ArrayList<DelaunayTriangle> _triList = new ArrayList<DelaunayTriangle>();
-
-//    protected TMesh mesh = new TMesh();
     /** Advancing front **/
     protected AdvancingFront aFront;
     /** head point used with advancing front */
@@ -75,14 +68,16 @@ public class DTSweepContext extends TriangulationContext
         clear();
     }
         
-    public void addToMap( DelaunayTriangle triangle )
+    public void isDebugEnabled( boolean b )
     {
-        _triList.add( triangle );
-        if( isDebugEnabled() )
+        if( b )
         {
-            getDebugContext().setPrimaryTriangle( triangle );
-            suspend("Triangle added to map");
+            if( _debug == null )
+            {
+                _debug = new DTSweepDebugContext(this);
+            }
         }
+        _debugEnabled  = b;
     }
 
     public void removeFromList( DelaunayTriangle triangle )
@@ -179,7 +174,7 @@ public class DTSweepContext extends TriangulationContext
 //        DelaunayTriangle iTriangle = new DelaunayTriangle( new TriangulationPoint[] { _pointSet.getPoints().get(0), 
 //                                                                                      getTail(), 
 //                                                                                      getHead() } );
-        addToMap( iTriangle );
+        addToList( iTriangle );
         aFront = new AdvancingFront();
         
         aFront.head = new AdvancingFrontNode( iTriangle.points[1] );

@@ -30,6 +30,11 @@
  */
 package org.poly2tri.triangulation.delaunay.sweep;
 
+import static org.poly2tri.triangulation.TriangulationUtil.EPSILON;
+import static org.poly2tri.triangulation.TriangulationUtil.inScanArea;
+import static org.poly2tri.triangulation.TriangulationUtil.orient2d;
+import static org.poly2tri.triangulation.TriangulationUtil.smartIncircle;
+
 import java.util.ArrayList;
 
 import org.poly2tri.triangulation.TriangulationPoint;
@@ -39,12 +44,6 @@ import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
 import org.poly2tri.triangulation.point.TPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-
-import static org.poly2tri.triangulation.TriangulationUtil.EPSILON;
-import static org.poly2tri.triangulation.TriangulationUtil.inScanArea;
-import static org.poly2tri.triangulation.TriangulationUtil.orient2d;
-import static org.poly2tri.triangulation.TriangulationUtil.smartIncircle;
 
 /**
  * Sweep-line, Constrained Delauney Triangulation (CDT) See: Domiter, V. and
@@ -78,11 +77,11 @@ public class DTSweep
         // By doing a legalize on all triangles and see if anything happens
         // we know if the sweep algorithm missed some legalizations
 //        System.out.println("============================");
-//        for( DelaunayTriangle t : tcx._triList )
+//        for( DelaunayTriangle t : tcx.getTriangles() )
 //        {
 //            if( legalize( tcx, t ) )
 //            {
-////                tcx.setActiveTriangle( t );
+//                tcx.getDebugContext().setPrimaryTriangle( t );
 //                System.out.println("[FIXME] Triangle needed legalization after sweep");
 //            }
 //        }
@@ -146,10 +145,9 @@ public class DTSweep
         n3 = n2.next;
         first = n1.point;
 
-        // TODO: implement ConvexHull
-        // I see a solution to traverse front and find edges that 
-        // form a ConvexHull then use the fillEdgeEvent to fill 
+        turnAdvancingFrontConvex( tcx, n2, n3 );
         
+        // TODO: implement ConvexHull for lower right and left boundary
         // Lower right boundary 
         first = tcx.aFront.head.point;
         n2 = tcx.aFront.tail.prev;
@@ -177,6 +175,44 @@ public class DTSweep
         tcx.finalizeTriangulation();
     }
 
+    /**
+     * We will traverse the entire advancing front and fill it to form a
+     * convex hull.<br>
+     */
+    private static void turnAdvancingFrontConvex( DTSweepContext tcx, 
+                                                  AdvancingFrontNode b, 
+                                                  AdvancingFrontNode c )
+    {
+        AdvancingFrontNode first = b;
+        while( c != tcx.aFront.tail )
+        {
+            if( tcx.isDebugEnabled() ) { tcx.getDebugContext().setActiveNode( c ); }
+
+            if( orient2d( b.point, c.point, c.next.point ) == Orientation.CCW )
+            {
+                // [b,c,d] Concave - fill around c
+                fill( tcx, c );
+                c = c.next;
+            }
+            else
+            {
+                // [b,c,d] Convex
+                if( b != first && orient2d( b.prev.point, b.point, c.point ) == Orientation.CCW )
+                {
+                    // [a,b,c] Concave - fill around b
+                    fill( tcx, b );
+                    b = b.prev;
+                }
+                else
+                {
+                    // [a,b,c] Convex - nothing to fill
+                    b = c;
+                    c = c.next;
+                }
+            }            
+        }
+    }
+    
     private static void finalizationPolygon( DTSweepContext tcx )
     {
         // Get an Internal triangle to start with
@@ -238,7 +274,7 @@ public class DTSweep
     
         triangle = new DelaunayTriangle( point, node.point, node.next.point );
         triangle.markNeighbor( node.triangle );
-        tcx.addToMap( triangle );          
+        tcx.addToList( triangle );          
 
         newNode = new AdvancingFrontNode( point );
         newNode.next = node.next;
@@ -990,7 +1026,7 @@ public class DTSweep
         //       for now cEdge values are copied during the legalize 
         triangle.markNeighbor( node.prev.triangle );
         triangle.markNeighbor( node.triangle );
-        tcx.addToMap( triangle );
+        tcx.addToList( triangle );
 
         // Update the advancing front
         node.prev.next = node.next;
@@ -1076,7 +1112,6 @@ public class DTSweep
 
                     // If triangle have been legalized no need to check the other edges since
                     // the recursive legalization will handles those so we can end here.
-                    if( tcx.isDebugEnabled() ) { tcx.suspend( "was legalized" ); }
                     return true;
                 }
             }

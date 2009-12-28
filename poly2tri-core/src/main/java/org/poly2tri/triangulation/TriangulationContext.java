@@ -33,26 +33,25 @@ package org.poly2tri.triangulation;
 import java.util.ArrayList;
 
 import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
-import org.poly2tri.triangulation.delaunay.sweep.AdvancingFrontNode;
-import org.poly2tri.triangulation.delaunay.sweep.DTSweepConstraint;
 import org.poly2tri.triangulation.sets.PointSet;
 
-
-public abstract class TriangulationContext
+public abstract class TriangulationContext<A extends TriangulationDebugContext>
 {
     public enum TriangulationMode
     {
         DT,CDT,Polygon
     }
     
-    private DebugContext _debug;
+    protected A _debug;
+    protected boolean _debugEnabled = false;
     
+    protected ArrayList<DelaunayTriangle> _triList = new ArrayList<DelaunayTriangle>();
+
     protected PointSet _pointSet;
     protected ArrayList<TriangulationPoint> _points = new ArrayList<TriangulationPoint>(200);
     protected TriangulationMode _triangulationMode;
 
     private boolean _terminated = false;
-    private boolean _debugEnabled = false;
     private boolean _waitUntilNotified;
 
     private int _stepTime = -1;
@@ -66,6 +65,16 @@ public abstract class TriangulationContext
 
     public abstract void prepareTriangulation();
     
+    public void addToList( DelaunayTriangle triangle )
+    {
+        _triList.add( triangle );
+    }
+
+    public ArrayList<DelaunayTriangle> getTriangles()
+    {
+        return _triList;
+    }
+    
     public ArrayList<TriangulationPoint> getPoints()
     {
         return _points;
@@ -73,42 +82,45 @@ public abstract class TriangulationContext
 
     public synchronized void suspend(String message)
     {
-        if( !_debugEnabled ) return;
-        try
+        if( _debugEnabled )
         {
-            synchronized( this )
+            try
             {
-                if( _stepTime > 0 )
+                synchronized( this )
                 {
-                    wait( (int)_stepTime );
-                    /** Can we resume execution or are we being read */ 
-                    if( _waitUntilNotified )
+                    _stepCount++;
+                    if( _stepTime > 0 )
+                    {
+                        wait( (int)_stepTime );
+                        /** Can we resume execution or are we being read */ 
+                        if( _waitUntilNotified )
+                        {
+                            wait();
+                        }
+                    }
+                    else
                     {
                         wait();
                     }
+                    // We have been notified
+                    _waitUntilNotified = false;
                 }
-                else
-                {
-                    wait();
-                }
-                // We have been notified
-                _waitUntilNotified = false;
+            }
+            catch( InterruptedException e )
+            {
+                suspend("Triangulation was interrupted");
             }
         }
-        catch( InterruptedException e )
-        {
-            suspend("Triangulation was interrupted");
-        }
-        _stepCount++;
         if( _terminated )
         {
-            throw new RuntimeException( "Triangulation process terminated");
+            throw new RuntimeException( "Triangulation process terminated before completion");
         }
     }
-
+    
     public void clear()
     {
         _points.clear();
+        _terminated = false;
         _stepCount=0;
     }
 
@@ -145,97 +157,14 @@ public abstract class TriangulationContext
         return _debugEnabled;
     }
     
-    public void isDebugEnabled( boolean b )
-    {
-        if( b )
-        {
-            _debug = new DebugContext();
-        }
-        _debugEnabled  = b;
-    }
+    public abstract void isDebugEnabled( boolean b );
 
-    public DebugContext getDebugContext()
+    public A getDebugContext()
     {
         return _debug;
     }
     
-    public class DebugContext
+    public abstract class DebugContext
     {
-        /*
-         * Fields used for visual representation of current triangulation
-         */
-        protected DelaunayTriangle _primaryTriangle;
-        protected DelaunayTriangle _secondaryTriangle;
-        protected TriangulationPoint _activePoint;
-        protected AdvancingFrontNode _activeNode;
-        protected DTSweepConstraint _activeConstraint;   
-        
-//      private Tuple2<TPoint,Double> m_circumCircle = new Tuple2<TPoint,Double>( new TPoint(), new Double(0) );
-//      public Tuple2<TPoint,Double> getCircumCircle() { return m_circumCircle; }
-        public DelaunayTriangle getPrimaryTriangle()
-        {
-            return _primaryTriangle;
-        }
-
-        public DelaunayTriangle getSecondaryTriangle()
-        {
-            return _secondaryTriangle;
-        }
-
-        public void setActiveConstraint( DTSweepConstraint e )
-        {
-            _activeConstraint = e;
-            suspend("setWorkingSegment");
-        }
-        
-        public DTSweepConstraint getActiveConstraint()
-        {
-            return _activeConstraint;
-        }
-
-        public void setPrimaryTriangle( DelaunayTriangle triangle )
-        {
-            _primaryTriangle = triangle;        
-            suspend("setPrimaryTriangle");
-        }
-
-        public void setSecondaryTriangle( DelaunayTriangle triangle )
-        {
-            _secondaryTriangle = triangle;        
-            suspend("setSecondaryTriangle");
-        }
-
-        public TriangulationPoint getActivePoint()
-        {
-            return _activePoint;
-        }
-        
-        public void setActivePoint( TriangulationPoint point )
-        {
-            _activePoint = point;        
-        }
-
-        public void setActiveNode( AdvancingFrontNode node )
-        {
-            _activeNode = node;        
-            suspend("setWorkingNode");
-        }
-        
-        public AdvancingFrontNode getActiveNode()
-        {
-            return _activeNode;
-        }
-        
-//      public void setWorkingCircumCircle( TPoint point, TPoint point2, TPoint point3 )
-//      {
-//          double dx,dy;
-//          
-//          CircleXY.circumCenter( point, point2, point3, m_circumCircle.a );
-//          dx = m_circumCircle.a.getX()-point.getX();
-//          dy = m_circumCircle.a.getY()-point.getY();
-//          m_circumCircle.b = Double.valueOf( Math.sqrt( dx*dx + dy*dy ) );
-//          
-//      }
-
-    }    
+    }
 }

@@ -33,6 +33,7 @@ package org.poly2tri;
 import org.poly2tri.polygon.Polygon;
 import org.poly2tri.triangulation.TriangulationAlgorithm;
 import org.poly2tri.triangulation.TriangulationContext;
+import org.poly2tri.triangulation.TriangulationDebugContext;
 import org.poly2tri.triangulation.TriangulationProcess;
 import org.poly2tri.triangulation.TriangulationContext.TriangulationMode;
 import org.poly2tri.triangulation.delaunay.sweep.DTSweep;

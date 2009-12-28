@@ -14,21 +14,12 @@ import com.ardor3d.util.geom.BufferUtils;
 
 public class ArdorMeshMapper
 {
-    /**
-     * Will populate a given Mesh's vertex,index buffer and set IndexMode.Triangles<br>
-     * Will also increase buffer sizes if needed by creating new buffers.
-     * 
-     * @param mesh
-     * @param ps
-     */
-    public static void updateTriangleMesh( Mesh mesh, PointSet ps )
+    public static void updateTriangleMesh( Mesh mesh, List<DelaunayTriangle> triangles )
     {
-        List<DelaunayTriangle> triangles;
         FloatBuffer vertBuf;
 
         mesh.getMeshData().setIndexMode( IndexMode.Triangles );
 
-        triangles = ps.getTriangles();            
         if( triangles == null || triangles.size() == 0 )
         {
             return;
@@ -46,6 +37,18 @@ public class ArdorMeshMapper
                 vertBuf.put(t.points[i].getXf()).put(t.points[i].getYf()).put(0);
             }
         }
+    }
+    
+    /**
+     * Will populate a given Mesh's vertex,index buffer and set IndexMode.Triangles<br>
+     * Will also increase buffer sizes if needed by creating new buffers.
+     * 
+     * @param mesh
+     * @param ps
+     */
+    public static void updateTriangleMesh( Mesh mesh, PointSet ps )
+    {
+        updateTriangleMesh( mesh, ps.getTriangles() );
     }
 
     public static void updateVertexBuffer( Mesh mesh, List<TriangulationPoint> list )

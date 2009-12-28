@@ -1,6 +1,6 @@
 package org.poly2tri.triangulation;
 
-public class TriangulationDebugContext
+public abstract class TriangulationDebugContext
 {
     protected TriangulationContext _tcx;
     
@@ -8,4 +8,6 @@ public class TriangulationDebugContext
     {
         _tcx = tcx;
     }
+    
+    public abstract void clear();
 }

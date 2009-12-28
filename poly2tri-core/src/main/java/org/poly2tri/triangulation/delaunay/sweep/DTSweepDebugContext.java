@@ -81,6 +81,16 @@ public class DTSweepDebugContext extends TriangulationDebugContext
         _activeNode = node;        
         _tcx.suspend("setWorkingNode");
     }
+
+    @Override
+    public void clear()
+    {
+        _primaryTriangle = null;
+        _secondaryTriangle = null;
+        _activePoint = null;
+        _activeNode = null;
+        _activeConstraint = null;   
+    }
         
 //  public void setWorkingCircumCircle( TPoint point, TPoint point2, TPoint point3 )
 //  {

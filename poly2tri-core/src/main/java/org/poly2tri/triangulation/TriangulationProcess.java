@@ -270,8 +270,6 @@ public class TriangulationProcess implements Runnable
         {
             synchronized( _thread )
             {
-                // FIXME: m_thread can be set to null after check and before call to
-                // m_thread.getState() so we get null pointer exception
                 if( _thread.getState() == State.WAITING )
                 {
                     return true;

@@ -2,6 +2,7 @@ package org.poly2tri.examples.ardor3d;
 
 import java.io.IOException;
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.poly2tri.examples.ardor3d.base.P2TExampleBase;
@@ -15,6 +16,8 @@ import org.poly2tri.triangulation.delaunay.sweep.AdvancingFront;
 import org.poly2tri.triangulation.delaunay.sweep.AdvancingFrontNode;
 import org.poly2tri.triangulation.delaunay.sweep.DTSweepConstraint;
 import org.poly2tri.triangulation.delaunay.sweep.DTSweepContext;
+import org.poly2tri.triangulation.point.TPoint;
+import org.poly2tri.triangulation.sets.ConstrainedPointSet;
 import org.poly2tri.triangulation.sets.PolygonSet;
 import org.poly2tri.triangulation.util.PolygonGenerator;
 import org.slf4j.Logger;
@@ -108,7 +111,7 @@ public class CDTModelExample extends P2TExampleBase
     {
         super.initExample();
         
-//        getContext().isDebugEnabled( true );
+        getContext().isDebugEnabled( true );
 
         if( getContext().isDebugEnabled() )
         {    
@@ -166,7 +169,24 @@ public class CDTModelExample extends P2TExampleBase
             _polygonSet = new PolygonSet( PolygonGenerator.RandomCircleSweep( SCALE, m_vertexCount ) );        
         }                
     }
+     
+    private ConstrainedPointSet buildCustom()
+    {
+        ArrayList<TriangulationPoint> list = new ArrayList<TriangulationPoint>(20);
+        int[] index;
         
+        list.add( new TPoint(2.2715518,-4.5233157) );
+        list.add( new TPoint(3.4446202,-3.5232647) );
+        list.add( new TPoint(4.7215156,-4.5233157) );
+        list.add( new TPoint(6.0311967,-3.5232647) );
+        list.add( new TPoint(3.4446202,-7.2578132) );
+        list.add( new TPoint(.81390847,-3.5232647) );
+        
+        index = new int[]{3,5};
+        
+        return new ConstrainedPointSet( list, index );
+    }
+    
     protected void triangulate()
     {
         super.triangulate();
@@ -269,12 +289,15 @@ public class CDTModelExample extends P2TExampleBase
         _logicalLayer.registerTrigger( new InputTrigger( new KeyPressedCondition( Key.SPACE ), new TriggerAction() {
             public void perform( final Canvas canvas, final TwoInputStates inputState, final double tpf )
             {
-                PolygonLoader.saveTriLine( m_dataPath, _polygonSet ); 
+//                PolygonLoader.saveTriLine( m_dataPath, _polygonSet ); 
+                m_stepCount = 0;
+                _process.triangulate( buildCustom() );
+
             }
         } ) );                  
     }
     
-    class CDTSweepAdvancingFront extends SceneElement<TriangulationContext>
+    class CDTSweepAdvancingFront extends SceneElement<DTSweepContext>
     {
         protected Line m_nodeLines;
         protected Point m_frontPoints;
@@ -306,7 +329,7 @@ public class CDTModelExample extends P2TExampleBase
         }
         
         @Override
-        public void update( TriangulationContext tcx  )
+        public void update( DTSweepContext tcx  )
         {
             AdvancingFront front = ((DTSweepContext)tcx).getAdvancingFront();
             AdvancingFrontNode node;
@@ -510,7 +533,6 @@ public class CDTModelExample extends P2TExampleBase
             _node.getSceneHints().setAllPickingHints( false );
             m_a.setDefaultColor( new ColorRGBA( 0.8f,0.8f,0.8f,1.0f ) );
             m_b.setDefaultColor( new ColorRGBA( 0.5f,0.5f,0.5f,1.0f ) );
-//            setScale( 20 );
         }
 
         public void setScale( double scale )
@@ -560,7 +582,7 @@ public class CDTModelExample extends P2TExampleBase
             m_a.setDefaultColor( ColorRGBA.DARK_GRAY );
             m_b.setDefaultColor( ColorRGBA.LIGHT_GRAY );
             m_c.setDefaultColor( ColorRGBA.DARK_GRAY );
-            setScale( 1 );
+            setScale( 0.5 );
         }
 
         public void setScale( double scale )
@@ -600,10 +622,11 @@ public class CDTModelExample extends P2TExampleBase
         }        
     }
 
-    private ExampleModels m_currentModel = ExampleModels.Custom;
+    private ExampleModels m_currentModel = ExampleModels.Test;
 
     public enum ExampleModels
     {
+        Test            ("test.dat",1,0,0,true),
         Two             ("2.dat",1,0,0,true),
         Debug           ("debug.dat",1,0,0,false),
         Debug2          ("debug2.dat",1,0,0,false),

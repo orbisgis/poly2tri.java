@@ -31,6 +31,7 @@
 package org.poly2tri.triangulation;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
 import org.poly2tri.triangulation.sets.PointSet;
@@ -70,12 +71,12 @@ public abstract class TriangulationContext<A extends TriangulationDebugContext>
         _triList.add( triangle );
     }
 
-    public ArrayList<DelaunayTriangle> getTriangles()
+    public List<DelaunayTriangle> getTriangles()
     {
         return _triList;
     }
     
-    public ArrayList<TriangulationPoint> getPoints()
+    public List<TriangulationPoint> getPoints()
     {
         return _points;
     }
@@ -121,6 +122,10 @@ public abstract class TriangulationContext<A extends TriangulationDebugContext>
     {
         _points.clear();
         _terminated = false;
+        if( _debug != null )
+        {
+            _debug.clear();
+        }
         _stepCount=0;
     }
 

@@ -3,6 +3,7 @@
 	<name>poly2tri-ardor3d</name>
 	<comment></comment>
 	<projects>
+		<project>poly2tri-core</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

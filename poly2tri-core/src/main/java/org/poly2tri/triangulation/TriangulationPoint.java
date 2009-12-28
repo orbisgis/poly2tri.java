@@ -72,4 +72,20 @@ public abstract class TriangulationPoint
     {
         return edges != null;
     }
+
+    /**
+     * @param p - edge destination point
+     * @return the edge from this point to given point
+     */
+    public DTSweepConstraint getEdge( TriangulationPoint p )
+    {
+        for( DTSweepConstraint c : edges )
+        {
+            if( c.p == p )
+            {
+                return c;
+            }
+        }
+        return null;
+    }
 }

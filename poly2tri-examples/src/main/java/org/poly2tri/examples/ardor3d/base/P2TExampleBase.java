@@ -4,6 +4,7 @@ import java.nio.FloatBuffer;
 import java.util.List;
 
 import org.poly2tri.triangulation.TriangulationAlgorithm;
+import org.poly2tri.triangulation.TriangulationPoint;
 import org.poly2tri.triangulation.TriangulationProcess;
 import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
 import org.poly2tri.triangulation.delaunay.sweep.DTSweepContext;
@@ -124,12 +125,13 @@ public abstract class P2TExampleBase extends P2TSimpleExampleBase
             if( _process.getContext().isDebugEnabled() )
             {
                 _cdtSweepMesh.update( _process.getContext().getTriangles() );
+                _cdtSweepPoints.update( _process.getContext().getPoints() );
             }
             else
             {
                 _cdtSweepMesh.update( _polygonSet.getTriangles() );                
+                _cdtSweepPoints.update( _polygonSet.getPoints() );
             }
-            _cdtSweepPoints.update( _polygonSet );
         }
     }
 
@@ -177,7 +179,7 @@ public abstract class P2TExampleBase extends P2TSimpleExampleBase
         }
     }
 
-    protected class CDTSweepPoints extends SceneElement<PointSet>
+    protected class CDTSweepPoints extends SceneElement<List<TriangulationPoint>>
     {
         private Point m_point = new Point();
         private boolean _pointsVisible = true;
@@ -212,9 +214,9 @@ public abstract class P2TExampleBase extends P2TSimpleExampleBase
         }
         
         @Override
-        public void update( PointSet ps )
+        public void update( List<TriangulationPoint> list )
         {   
-            ArdorMeshMapper.updateVertexBuffer( m_point, ps.getPoints() );
+            ArdorMeshMapper.updateVertexBuffer( m_point, list );
         }
     }
 

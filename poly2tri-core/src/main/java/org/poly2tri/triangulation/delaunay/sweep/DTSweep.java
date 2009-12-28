@@ -35,7 +35,7 @@ import static org.poly2tri.triangulation.TriangulationUtil.inScanArea;
 import static org.poly2tri.triangulation.TriangulationUtil.orient2d;
 import static org.poly2tri.triangulation.TriangulationUtil.smartIncircle;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.poly2tri.triangulation.TriangulationPoint;
 import org.poly2tri.triangulation.TriangulationContext.TriangulationMode;
@@ -82,7 +82,7 @@ public class DTSweep
 //            if( legalize( tcx, t ) )
 //            {
 //                tcx.getDebugContext().setPrimaryTriangle( t );
-//                System.out.println("[FIXME] Triangle needed legalization after sweep");
+//                System.out.println("[FIX] Triangle needed legalization after sweep");
 //            }
 //        }
                 
@@ -106,7 +106,7 @@ public class DTSweep
      */
     private static void sweep( DTSweepContext tcx )
     {
-        ArrayList<TriangulationPoint> points;
+        List<TriangulationPoint> points;
         TriangulationPoint point;
         AdvancingFrontNode node;
         
@@ -284,8 +284,10 @@ public class DTSweep
         
         if( tcx.isDebugEnabled() ) { tcx.getDebugContext().setActiveNode( newNode ); }
         
-        legalize( tcx, triangle );
-        tcx.mapTriangleToNodes( triangle );
+        if( !legalize( tcx, triangle ) )
+        {
+            tcx.mapTriangleToNodes( triangle );
+        }
 
         return newNode;
     }
@@ -542,6 +544,10 @@ public class DTSweep
         if( o1 == Orientation.Collinear )
         {
             // TODO: Split edge in two
+////            splitEdge( ep, eq, p1 );
+//            edgeEvent( tcx, p1, eq, triangle, point );
+//            edgeEvent( tcx, ep, p1, triangle, p1 );
+//            return;
             throw new RuntimeException( "EdgeEvent - Collinear not supported" );                
         }
 
@@ -550,6 +556,9 @@ public class DTSweep
         if( o2 == Orientation.Collinear )
         {
             // TODO: Split edge in two
+//            edgeEvent( tcx, p2, eq, triangle, point );
+//            edgeEvent( tcx, ep, p2, triangle, p2 );
+//            return;
             throw new RuntimeException( "EdgeEvent - Collinear not supported" );                
         }
 
@@ -586,14 +595,17 @@ public class DTSweep
      * one constraint for each triangle.  
      * @param ep
      * @param eq
-     * @param p
+     * @param p point on the edge between eq->ep
      */
-    private static void splitEdge( DTSweepConstraint ep, DTSweepConstraint eq, TPoint p )
+    private static void splitEdge( TriangulationPoint ep, 
+                                   TriangulationPoint eq, 
+                                   TriangulationPoint p )
     {
-//          Edge newEdge = new Edge(ep, p);
-//          p.edges.add( newEdge );
-//          edge.p = p;
-//          // Redo this edge now that we have split the constraint
+        DTSweepConstraint edge = eq.getEdge( ep );
+        edge.p = p;
+        new DTSweepConstraint(ep, p);
+
+//        // Redo this edge now that we have split the constraint
 //          newEdgeEvent( tcx, edge, triangle, point );
 //          // Continue with new edge
 //          newEdgeEvent( tcx, edge, triangle, p2 );

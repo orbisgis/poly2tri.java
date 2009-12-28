@@ -2,6 +2,7 @@ package org.poly2tri.examples.ardor3d;
 
 import java.io.IOException;
 import java.nio.FloatBuffer;
+import java.util.List;
 
 import org.poly2tri.examples.ardor3d.base.P2TExampleBase;
 import org.poly2tri.examples.ardor3d.misc.PolygonLoader;
@@ -59,8 +60,8 @@ public class CDTModelExample extends P2TExampleBase
     // Scene components
     private CDTSweepAdvancingFront _cdtSweepAdvancingFront;
     private CDTSweepActiveNode _cdtSweepActiveNode;
-    private CDTSweepActiveTriangles m_cdtSweepActiveTriangle;
-    private CDTSweepActiveEdge m_cdtSweepActiveEdge;
+    private CDTSweepActiveTriangles _cdtSweepActiveTriangle;
+    private CDTSweepActiveEdge _cdtSweepActiveEdge;
 //    private GUICircumCircle m_circumCircle;
         
     private int m_stepCount = 0;
@@ -83,7 +84,7 @@ public class CDTModelExample extends P2TExampleBase
     {
         super.updateExample( timer );
         
-        if( _process.getContext().isDebugEnabled() )
+        if( getContext().isDebugEnabled() )
         {
             int count = _process.getStepCount();
             if( m_stepCount < count )
@@ -107,7 +108,9 @@ public class CDTModelExample extends P2TExampleBase
     {
         super.initExample();
         
-        if( _process.getContext().isDebugEnabled() )
+//        getContext().isDebugEnabled( true );
+
+        if( getContext().isDebugEnabled() )
         {    
             _cdtSweepAdvancingFront = new CDTSweepAdvancingFront();
             _node.attachChild( _cdtSweepAdvancingFront.getSceneNode() );
@@ -115,16 +118,16 @@ public class CDTModelExample extends P2TExampleBase
             _cdtSweepActiveNode = new CDTSweepActiveNode();
             _node.attachChild( _cdtSweepActiveNode.getSceneNode() );
     
-            m_cdtSweepActiveTriangle = new CDTSweepActiveTriangles();
-            _node.attachChild( m_cdtSweepActiveTriangle.getSceneNode() );
+            _cdtSweepActiveTriangle = new CDTSweepActiveTriangles();
+            _node.attachChild( _cdtSweepActiveTriangle.getSceneNode() );
             
-            m_cdtSweepActiveEdge = new CDTSweepActiveEdge();
-            _node.attachChild( m_cdtSweepActiveEdge.getSceneNode() );
+            _cdtSweepActiveEdge = new CDTSweepActiveEdge();
+            _node.attachChild( _cdtSweepActiveEdge.getSceneNode() );
 
 //          m_circumCircle = new GUICircumCircle();
 //          m_node.attachChild( m_circumCircle.getSceneNode() );
         }
-        
+                
         buildModel(m_currentModel); 
         triangulate();
     }
@@ -174,20 +177,18 @@ public class CDTModelExample extends P2TExampleBase
     {        
         super.updateMesh();
         
-        TriangulationContext tcx = _process.getContext();
+        DTSweepContext tcx = getContext();
         
         if( tcx.isDebugEnabled() )
         {
-            m_cdtSweepActiveTriangle.update( tcx );
-            m_cdtSweepActiveEdge.update( tcx );
+            _cdtSweepActiveTriangle.update( tcx );
+            _cdtSweepActiveEdge.update( tcx );
             _cdtSweepActiveNode.update( tcx );
             _cdtSweepAdvancingFront.update( tcx );            
 //          m_circumCircle.update( tcx.getCircumCircle() );
         }
     }
     
-
-
     @Override
     public void registerInputTriggers()
     {
@@ -241,7 +242,7 @@ public class CDTModelExample extends P2TExampleBase
             public void perform( final Canvas canvas, final TwoInputStates inputState, final double tpf )
             {
                 // Lets create a TriangulationProcess that allows you to step thru the TriangulationAlgorithm        
-//                m_process.getContext().isDebugEnabled( true );
+//                _process.getContext().isDebugEnabled( true );
 //                _process.triangulate();
 //                m_stepCount = 0;
             }
@@ -251,6 +252,7 @@ public class CDTModelExample extends P2TExampleBase
         _logicalLayer.registerTrigger( new InputTrigger( new KeyPressedCondition( Key.C ), new TriggerAction() {
             public void perform( final Canvas canvas, final TwoInputStates inputState, final double tpf )
             {
+//                updateMesh();
                 _process.resume();
             }
         } ) );      
@@ -286,21 +288,21 @@ public class CDTModelExample extends P2TExampleBase
             m_frontLine.getMeshData().setVertexBuffer( BufferUtils.createVector3Buffer( 800 ) );
             m_frontLine.setDefaultColor( ColorRGBA.ORANGE );
             m_frontLine.setTranslation( 0, 0.05, 0 );
-            m_node.attachChild( m_frontLine );
+            _node.attachChild( m_frontLine );
             
             m_frontPoints = new Point();
             m_frontPoints.getMeshData().setVertexBuffer( m_frontLine.getMeshData().getVertexBuffer() );
             m_frontPoints.setPointSize( 6 );
             m_frontPoints.setDefaultColor( ColorRGBA.ORANGE );
             m_frontPoints.setTranslation( 0, 0.05, 0 );
-            m_node.attachChild( m_frontPoints );
+            _node.attachChild( m_frontPoints );
             
             m_nodeLines = new Line();
             m_nodeLines.getMeshData().setIndexMode( IndexMode.Lines );
             m_nodeLines.getMeshData().setVertexBuffer( BufferUtils.createVector3Buffer( 2*800 ) );
             m_nodeLines.setDefaultColor( ColorRGBA.YELLOW );
             m_nodeLines.setTranslation( 0, 0.05, 0 );
-            m_node.attachChild( m_nodeLines );
+            _node.attachChild( m_nodeLines );
         }
         
         @Override
@@ -406,9 +408,9 @@ public class CDTModelExample extends P2TExampleBase
         }        
                 
         @Override
-        public void update( PolygonSet ps )
+        public void update( List<DelaunayTriangle> triangles )
         {
-            super.update( ps );
+            super.update( triangles );
 //            MeshData md;
 //            Vector3 v1 = Vector3.fetchTempInstance();
 //            Vector3 v2 = Vector3.fetchTempInstance();
@@ -465,7 +467,7 @@ public class CDTModelExample extends P2TExampleBase
         }
     }
 
-    class CDTSweepActiveEdge extends SceneElement<TriangulationContext>
+    class CDTSweepActiveEdge extends SceneElement<DTSweepContext>
     {
         private Line m_edgeLine = new Line();
         
@@ -479,7 +481,7 @@ public class CDTModelExample extends P2TExampleBase
         }        
         
         @Override
-        public void update( TriangulationContext tcx )
+        public void update( DTSweepContext tcx )
         {
             DTSweepConstraint edge = tcx.getDebugContext().getActiveConstraint();
             if( edge != null )
@@ -488,16 +490,16 @@ public class CDTModelExample extends P2TExampleBase
                 fb.rewind();
                 fb.put( edge.getP().getXf() ).put( edge.getP().getYf() ).put( 0 );
                 fb.put( edge.getQ().getXf() ).put( edge.getQ().getYf() ).put( 0 );
-                m_node.attachChild( m_edgeLine );
+                _node.attachChild( m_edgeLine );
             }
             else
             {
-                m_node.detachAllChildren();
+                _node.detachAllChildren();
             }
         }
     }
     
-    class CDTSweepActiveTriangles extends SceneElement<TriangulationContext>
+    class CDTSweepActiveTriangles extends SceneElement<DTSweepContext>
     {
         private Triangle m_a = new Triangle();
         private Triangle m_b = new Triangle();
@@ -505,9 +507,10 @@ public class CDTModelExample extends P2TExampleBase
         public CDTSweepActiveTriangles()
         {
             super("ActiveTriangles");
-            m_node.getSceneHints().setAllPickingHints( false );
+            _node.getSceneHints().setAllPickingHints( false );
             m_a.setDefaultColor( new ColorRGBA( 0.8f,0.8f,0.8f,1.0f ) );
             m_b.setDefaultColor( new ColorRGBA( 0.5f,0.5f,0.5f,1.0f ) );
+//            setScale( 20 );
         }
 
         public void setScale( double scale )
@@ -517,12 +520,12 @@ public class CDTModelExample extends P2TExampleBase
         }
         
         @Override
-        public void update( TriangulationContext tcx )
+        public void update( DTSweepContext tcx )
         {
             DelaunayTriangle t,t2;
             t = tcx.getDebugContext().getPrimaryTriangle();
             t2 = tcx.getDebugContext().getSecondaryTriangle();
-            m_node.detachAllChildren();
+            _node.detachAllChildren();
             if( t != null )
             {
                 FloatBuffer fb = m_a.getMeshData().getVertexBuffer();
@@ -530,7 +533,7 @@ public class CDTModelExample extends P2TExampleBase
                 fb.put( t.points[0].getXf() ).put( t.points[0].getYf() ).put( t.points[0].getZf() );
                 fb.put( t.points[1].getXf() ).put( t.points[1].getYf() ).put( t.points[1].getZf() );
                 fb.put( t.points[2].getXf() ).put( t.points[2].getYf() ).put( t.points[2].getZf() );                
-                m_node.attachChild( m_a );
+                _node.attachChild( m_a );
             }
             if( t2 != null )
             {
@@ -539,12 +542,12 @@ public class CDTModelExample extends P2TExampleBase
                 fb.put( t2.points[0].getXf() ).put( t2.points[0].getYf() ).put( t2.points[0].getZf() );
                 fb.put( t2.points[1].getXf() ).put( t2.points[1].getYf() ).put( t2.points[1].getZf() );
                 fb.put( t2.points[2].getXf() ).put( t2.points[2].getYf() ).put( t2.points[2].getZf() );                
-                m_node.attachChild( m_b );
+                _node.attachChild( m_b );
             }
         }        
     }
 
-    class CDTSweepActiveNode extends SceneElement<TriangulationContext>
+    class CDTSweepActiveNode extends SceneElement<DTSweepContext>
     {
         private Triangle m_a = new Triangle();
         private Triangle m_b = new Triangle();
@@ -553,11 +556,11 @@ public class CDTModelExample extends P2TExampleBase
         public CDTSweepActiveNode()
         {
             super("WorkingNode");
-            m_node.setRenderState( new WireframeState() );
+            _node.setRenderState( new WireframeState() );
             m_a.setDefaultColor( ColorRGBA.DARK_GRAY );
             m_b.setDefaultColor( ColorRGBA.LIGHT_GRAY );
             m_c.setDefaultColor( ColorRGBA.DARK_GRAY );
-            setScale( 0.1 );
+            setScale( 1 );
         }
 
         public void setScale( double scale )
@@ -568,7 +571,7 @@ public class CDTModelExample extends P2TExampleBase
         }
         
         @Override
-        public void update( TriangulationContext tcx )
+        public void update( DTSweepContext tcx )
         {
             AdvancingFrontNode node = tcx.getDebugContext().getActiveNode();
             TriangulationPoint p;
@@ -586,18 +589,18 @@ public class CDTModelExample extends P2TExampleBase
                     p = node.getNext().getPoint();
                     m_c.setTranslation( p.getXf(), p.getYf(), p.getZf() );
                 }
-                m_node.attachChild( m_a );
-                m_node.attachChild( m_b );
-                m_node.attachChild( m_c );
+                _node.attachChild( m_a );
+                _node.attachChild( m_b );
+                _node.attachChild( m_c );
             }
             else
             {
-                m_node.detachAllChildren();
+                _node.detachAllChildren();
             }
         }        
     }
 
-    private ExampleModels m_currentModel = ExampleModels.Two;
+    private ExampleModels m_currentModel = ExampleModels.Custom;
 
     public enum ExampleModels
     {

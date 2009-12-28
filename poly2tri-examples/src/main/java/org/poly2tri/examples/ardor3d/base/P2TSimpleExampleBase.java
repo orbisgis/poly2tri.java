@@ -48,7 +48,7 @@ public abstract class P2TSimpleExampleBase extends ExampleBase
 
         _node = new Node();
         _node.getSceneHints().setLightCombineMode( LightCombineMode.Off );
-        _node.setRenderState( new WireframeState() );
+//        _node.setRenderState( new WireframeState() );
         _root.attachChild( _node );        
         
         try {

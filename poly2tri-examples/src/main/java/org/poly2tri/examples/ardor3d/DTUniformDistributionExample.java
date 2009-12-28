@@ -11,7 +11,6 @@ import com.ardor3d.input.logical.LogicalLayer;
 import com.ardor3d.math.ColorRGBA;
 import com.ardor3d.renderer.state.WireframeState;
 import com.ardor3d.scenegraph.Mesh;
-import com.ardor3d.scenegraph.hint.LightCombineMode;
 import com.google.inject.Inject;
 
 public class DTUniformDistributionExample extends P2TSimpleExampleBase
@@ -35,9 +34,10 @@ public class DTUniformDistributionExample extends P2TSimpleExampleBase
 
         Mesh mesh = new Mesh();
         mesh.setDefaultColor( ColorRGBA.BLUE );
+        mesh.setRenderState( new WireframeState() );
         _node.attachChild( mesh );
   
-        PointSet ps = new PointSet( PointGenerator.uniformDistribution( 60, 20000 ) );
+        PointSet ps = new PointSet( PointGenerator.uniformDistribution( 60, 200 ) );
         Poly2Tri.triangulate( ps );
         ArdorMeshMapper.updateTriangleMesh( mesh, ps );
     }

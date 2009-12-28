@@ -1,9 +1,12 @@
 package org.poly2tri.examples.ardor3d.base;
 
 import java.nio.FloatBuffer;
+import java.util.List;
 
-import org.poly2tri.Poly2Tri;
+import org.poly2tri.triangulation.TriangulationAlgorithm;
 import org.poly2tri.triangulation.TriangulationProcess;
+import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
+import org.poly2tri.triangulation.delaunay.sweep.DTSweepContext;
 import org.poly2tri.triangulation.sets.PointSet;
 import org.poly2tri.triangulation.sets.PolygonSet;
 import org.poly2tri.triangulation.tools.ardor3d.ArdorMeshMapper;
@@ -54,9 +57,9 @@ public abstract class P2TExampleBase extends P2TSimpleExampleBase
 
         // Warmup the triangulation code for better performance 
         // when we need triangulation during runtime
-        Poly2Tri.warmup();
+//        Poly2Tri.warmup();
         
-        _process = new TriangulationProcess();
+        _process = new TriangulationProcess(TriangulationAlgorithm.DTSweep);
                         
         _cdtSweepPoints = new CDTSweepPoints();
         _cdtSweepMesh = new CDTSweepMesh();
@@ -78,6 +81,11 @@ public abstract class P2TExampleBase extends P2TSimpleExampleBase
     
     }
 
+    protected DTSweepContext getContext()
+    {
+        return (DTSweepContext)_process.getContext();
+    }
+    
     /**
      * Update text information.
      */
@@ -113,7 +121,14 @@ public abstract class P2TExampleBase extends P2TSimpleExampleBase
     {        
         if( _polygonSet != null )
         {
-            _cdtSweepMesh.update( _polygonSet );
+            if( _process.getContext().isDebugEnabled() )
+            {
+                _cdtSweepMesh.update( _process.getContext().getTriangles() );
+            }
+            else
+            {
+                _cdtSweepMesh.update( _polygonSet.getTriangles() );                
+            }
             _cdtSweepPoints.update( _polygonSet );
         }
     }
@@ -146,19 +161,19 @@ public abstract class P2TExampleBase extends P2TSimpleExampleBase
     
     protected abstract class SceneElement<A>
     {
-        protected Node m_node;
+        protected Node _node;
         
         public SceneElement(String name)
         {
-            m_node = new Node(name);
-            m_node.getSceneHints().setAllPickingHints( false );            
+            _node = new Node(name);
+            _node.getSceneHints().setAllPickingHints( false );            
         }
 
         public abstract void update( A element );
 
         public Node getSceneNode()
         {
-            return m_node;
+            return _node;
         }
     }
 
@@ -174,7 +189,7 @@ public abstract class P2TExampleBase extends P2TSimpleExampleBase
             m_point.setDefaultColor( ColorRGBA.RED );
             m_point.setPointSize( 1 );
             m_point.setTranslation( 0, 0, 0.01 );
-            m_node.attachChild( m_point );
+            _node.attachChild( m_point );
 
             MeshData md = m_point.getMeshData();
             int size = 1000;
@@ -191,7 +206,7 @@ public abstract class P2TExampleBase extends P2TSimpleExampleBase
             }
             else
             {
-                m_node.attachChild( m_point );
+                _node.attachChild( m_point );
                 _pointsVisible = true;
             }
         }
@@ -203,7 +218,7 @@ public abstract class P2TExampleBase extends P2TSimpleExampleBase
         }
     }
 
-    protected class CDTSweepMesh extends SceneElement<PolygonSet>
+    protected class CDTSweepMesh extends SceneElement<List<DelaunayTriangle>>
     {
         private Mesh m_mesh = new Mesh();
         private WireframeState _ws = new WireframeState();
@@ -215,7 +230,7 @@ public abstract class P2TExampleBase extends P2TSimpleExampleBase
             MeshData md;
             m_mesh.setDefaultColor( ColorRGBA.BLUE );
             m_mesh.setRenderState( _ws );
-            m_node.attachChild( m_mesh );
+            _node.attachChild( m_mesh );
 
             md = m_mesh.getMeshData();
             int size = 1000;
@@ -237,12 +252,9 @@ public abstract class P2TExampleBase extends P2TSimpleExampleBase
         }
         
         @Override
-        public void update( PolygonSet ps )
+        public void update( List<DelaunayTriangle> triangles )
         {            
-            if( ps != null )
-            {
-                ArdorMeshMapper.updateTriangleMesh( m_mesh, ps );
-            }
+            ArdorMeshMapper.updateTriangleMesh( m_mesh, triangles );
         }
     }
 

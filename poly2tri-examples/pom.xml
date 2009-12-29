@@ -1,20 +1,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.poly2tri-examples</groupId>
   <artifactId>poly2tri-examples</artifactId>
-  <version>0.1.0-SNAPSHOT</version>
   
     
   <properties>
   	<lwjgl.version>2.1.0</lwjgl.version>
-  </properties>    
+  </properties>
+  <name>Poly2Tri Examples</name>    
 
 
   <parent>
   	<artifactId>poly2tri</artifactId>
   	<groupId>org.poly2tri</groupId>
   	<version>0.1.0-SNAPSHOT</version>
-  	<relativePath>../poly2tri/pom.xml</relativePath>
+  	<relativePath>../pom.xml</relativePath>
   </parent>
   
   
@@ -51,11 +50,6 @@
 
   <repositories>
   	<repository>
-  		<id>Ardor3D-releases</id>
-  		<name>Ardor3D-releases</name>
-  		<url>http://ardor3d.com:8081/nexus/content/repositories/releases</url>
-  	</repository>
-  	<repository>
   		<id>Project-local</id>
   		<name>Project-local</name>
   		<url>file://${project.basedir}/repository</url>
@@ -65,9 +59,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.poly2tri-ardor3d</groupId>
+      <groupId>org.poly2tri</groupId>
       <artifactId>poly2tri-ardor3d</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
  	<dependency>
  		<groupId>com.ardor3d</groupId>

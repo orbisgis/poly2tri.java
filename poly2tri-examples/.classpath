@@ -3,12 +3,12 @@
 	<classpathentry kind="src" path="src/main/java"/>
 	<classpathentry kind="src" path="src/main/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/poly2tri-core/target/classes" sourcepath="/poly2tri-core/src/main/java"/>
-	<classpathentry kind="lib" path="/poly2tri-ardor3d/target/classes" sourcepath="/poly2tri-ardor3d/src/main/java"/>
 	<classpathentry kind="lib" path="target/lib/classes" sourcepath="target/lib/sources">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="poly2tri-examples/target/lib/natives"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/poly2tri-ardor3d"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/poly2tri-core"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

@@ -15,3 +15,5 @@ syntax: regexp
 ^\.classpath$
 syntax: regexp
 ^\.project$
+syntax: regexp
+^poly2tri$

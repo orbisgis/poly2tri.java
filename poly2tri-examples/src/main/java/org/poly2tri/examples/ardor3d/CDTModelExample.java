@@ -111,7 +111,7 @@ public class CDTModelExample extends P2TExampleBase
     {
         super.initExample();
         
-        getContext().isDebugEnabled( true );
+//        getContext().isDebugEnabled( true );
 
         if( getContext().isDebugEnabled() )
         {    

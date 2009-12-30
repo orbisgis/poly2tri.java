@@ -37,7 +37,7 @@ public class DTUniformDistributionExample extends P2TSimpleExampleBase
         mesh.setRenderState( new WireframeState() );
         _node.attachChild( mesh );
   
-        PointSet ps = new PointSet( PointGenerator.uniformDistribution( 60, 1000000 ) );
+        PointSet ps = new PointSet( PointGenerator.uniformDistribution( 60, 100000 ) );
         Poly2Tri.triangulate( ps );
         ArdorMeshMapper.updateTriangleMesh( mesh, ps );
     }

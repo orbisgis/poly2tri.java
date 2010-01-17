@@ -4,3 +4,5 @@ syntax: regexp
 ^poly2tri-core/target$
 syntax: regexp
 ^poly2tri-examples/target$
+syntax: regexp
+^poly2tri-examples-geotools/target$

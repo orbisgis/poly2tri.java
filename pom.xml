@@ -29,6 +29,7 @@
   	<module>poly2tri-core</module>
   	<module>poly2tri-ardor3d</module>
   	<module>poly2tri-examples</module>
+  	<module>poly2tri-examples-geotools</module>
   </modules>
   <repositories>
   	<repository>
@@ -67,6 +68,9 @@
 		<plugin>
 		<groupId>org.apache.maven.plugins</groupId>
        	<artifactId>maven-dependency-plugin</artifactId>
+           	<configuration>            	
+   	          	<failOnWarning>false</failOnWarning>
+   	        </configuration>
 	       	<executions>
   <!-- http://maven.apache.org/plugins/maven-dependency-plugin/unpack-dependencies-mojo.html -->
   <!-- unpack all 3dparty classes to one directory -->
@@ -76,7 +80,7 @@
             	<goals>
               	<goal>unpack-dependencies</goal>
             	</goals>
-            	<configuration>
+            	<configuration>            	
     	          	<outputDirectory>${project.build.directory}/lib/classes</outputDirectory>
 					<type>jar</type>
     	        </configuration>

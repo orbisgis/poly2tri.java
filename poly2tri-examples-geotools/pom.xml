@@ -1,0 +1,129 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>poly2tri-examples-geotools</artifactId>
+  <packaging>jar</packaging>
+
+  <properties>
+  	<geotools.version>2.6.0</geotools.version>
+  </properties>
+
+  <profiles>
+  	<profile>
+  	  <id>windows</id>
+   	  <activation>
+  		<activeByDefault>true</activeByDefault>
+  	  </activation>
+  	  <properties>
+  		<build.type>windows</build.type>
+  	  </properties>
+ 	</profile>
+  </profiles>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+    	<groupId>org.geotools</groupId>
+    	<artifactId>gt-main</artifactId>
+    	<version>${geotools.version}</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.geotools</groupId>
+    	<artifactId>gt-shapefile</artifactId>
+    	<version>${geotools.version}</version>
+    </dependency>
+    <dependency>
+  	  <groupId>org.poly2tri</groupId>
+  	  <artifactId>poly2tri-examples</artifactId>
+  	  <version>${project.version}</version>
+    </dependency>    
+  </dependencies>
+  <name>Poly2Tri GeoTools Examples</name>
+    
+  <parent>
+  	<artifactId>poly2tri</artifactId>
+  	<groupId>org.poly2tri</groupId>
+  	<version>0.1.0-SNAPSHOT</version>
+  	<relativePath>../pom.xml</relativePath>
+  </parent>
+  
+  <repositories>
+    <repository>
+      <id>maven2-repository.dev.java.net</id>
+      <name>Java.net repository</name>
+      <url>http://download.java.net/maven/2</url>
+    </repository>
+    <repository>
+      <id>osgeo</id>
+      <name>Open Source Geospatial Foundation Repository</name>
+      <url>http://download.osgeo.org/webdav/geotools/</url>
+    </repository>	
+  	<repository>
+  		<id>Project-local</id>
+  		<name>Project-local</name>
+  		<url>file://${project.basedir}/repository</url>
+  	</repository>
+  </repositories>
+  
+  <build>
+  	<plugins>
+    <!--  http://maven.apache.org/plugins/maven-dependency-plugin/usage.html -->
+		<plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+       	<artifactId>maven-dependency-plugin</artifactId>
+	       	<executions>
+  <!-- http://maven.apache.org/plugins/maven-dependency-plugin/unpack-dependencies-mojo.html -->
+  <!-- unpack all 3dparty classes to one directory -->
+          	  <execution>
+            	<id>unpack-dependencies-classes</id>
+            	<phase>compile</phase>
+            	<goals>
+              	<goal>unpack-dependencies</goal>
+            	</goals>
+            	<configuration>
+            	   	<excludeGroupIds>org.poly2tri</excludeGroupIds>   
+    	          	<outputDirectory>${project.build.directory}/lib/classes</outputDirectory>
+					<type>jar</type>
+    	        </configuration>
+	          </execution>	 
+  <!-- unpack 3dparty natives, for this profile(windows is default) and given artifacts to one directory -->
+          	  <execution>
+            	<id>unpack-dependencies-natives</id>
+            	<phase>compile</phase>
+            	<goals>
+              	<goal>unpack-dependencies</goal>
+            	</goals>
+            	<configuration>
+            	   	<classifier>natives_${build.type}</classifier>  
+            	   	<includeArtifactIds>lwjgl</includeArtifactIds>   
+    	          	<outputDirectory>${project.build.directory}/lib/natives</outputDirectory>
+					<type>jar</type>
+    	        </configuration>
+	          </execution>	 
+    <!-- unpack 3dparty sources to one directory -->        	
+          	  <execution>
+            	<id>unpack-dependencies-sources</id>
+            	<phase>compile</phase>
+            	<goals>
+              	<goal>unpack-dependencies</goal>
+            	</goals>
+            	<configuration>
+	            	<classifier>sources</classifier>
+            	   	<excludeGroupIds>org.poly2tri</excludeGroupIds>   
+	            	<failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
+    	          	<outputDirectory>${project.build.directory}/lib/sources</outputDirectory>
+        		    <silent>true</silent>
+					<type>jar</type>
+    	        </configuration>
+	          </execution>	         	         	
+	        </executions>
+     	</plugin>
+    </plugins>
+  </build>
+  
+</project>

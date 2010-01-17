@@ -1,6 +1,6 @@
 package org.poly2tri.examples.ardor3d;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.poly2tri.Poly2Tri;
 import org.poly2tri.examples.ardor3d.base.P2TSimpleExampleBase;
@@ -13,9 +13,7 @@ import org.poly2tri.triangulation.util.PointGenerator;
 import com.ardor3d.framework.FrameHandler;
 import com.ardor3d.input.logical.LogicalLayer;
 import com.ardor3d.math.ColorRGBA;
-import com.ardor3d.renderer.state.WireframeState;
 import com.ardor3d.scenegraph.Mesh;
-import com.ardor3d.scenegraph.hint.LightCombineMode;
 import com.google.inject.Inject;
 
 public class CDTUniformDistributionExample extends P2TSimpleExampleBase
@@ -44,7 +42,7 @@ public class CDTUniformDistributionExample extends P2TSimpleExampleBase
         double scale = 100;
         int size = 1000;
         int index = (int)(Math.random()*size);
-        ArrayList<TriangulationPoint> points = PointGenerator.uniformDistribution( scale, size );
+        List<TriangulationPoint> points = PointGenerator.uniformDistribution( size, scale );
 
         // Lets add a constraint that cuts the uniformDistribution in half
         points.add( new TPoint(0,scale/2) );

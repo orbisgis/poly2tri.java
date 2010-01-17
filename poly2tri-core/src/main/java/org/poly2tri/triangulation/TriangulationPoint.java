@@ -54,6 +54,8 @@ public abstract class TriangulationPoint
     public abstract float getYf();
     public abstract float getZf();
     
+    public abstract void set( double x, double y, double z );
+    
     public ArrayList<DTSweepConstraint> getEdges()
     {
         return edges;
@@ -88,4 +90,22 @@ public abstract class TriangulationPoint
         }
         return null;
     }
+    
+    public boolean equals(Object obj) 
+    {
+        if( obj instanceof TriangulationPoint ) 
+        {
+            TriangulationPoint p = (TriangulationPoint)obj;
+            return getX() == p.getX() && getY() == p.getY();
+        }
+        return super.equals( obj );
+    }
+
+    public int hashCode()
+    {
+        long bits = java.lang.Double.doubleToLongBits(getX());
+        bits ^= java.lang.Double.doubleToLongBits(getY()) * 31;
+        return (((int) bits) ^ ((int) (bits >> 32)));
+    }
+
 }

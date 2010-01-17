@@ -31,7 +31,7 @@
 package org.poly2tri.triangulation.delaunay.sweep;
 
 import org.poly2tri.triangulation.TriangulationPoint;
-import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
+import org.poly2tri.triangulation.util.RedBlackBST;
 
 
 /**
@@ -39,16 +39,31 @@ import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
  */
 public class AdvancingFront
 {
-    DelaunayTriangle    iTriangle;
-
     public AdvancingFrontNode head;
-//    public AdvancingFrontNode middle;
     public AdvancingFrontNode tail;
-    public AdvancingFrontNode search;
+    protected AdvancingFrontNode search;
+    
+    protected RedBlackBST<Double,AdvancingFrontNode> _searchTree = new RedBlackBST<Double,AdvancingFrontNode>( RedBlackBST.BU23 );
 
-    public AdvancingFront()
-    {}
+    public AdvancingFront( AdvancingFrontNode head, AdvancingFrontNode tail )
+    {
+        this.head = head;
+        this.tail = tail;
+        this.search = head;
+        addNode( head );
+        addNode( tail );
+    }
 
+    public void addNode( AdvancingFrontNode node )
+    {
+//        _searchTree.put( node.key, node );
+    }
+    
+    public void removeNode( AdvancingFrontNode node )
+    {
+//        _searchTree.delete( node.key );
+    }
+    
     public String toString()
     {
         StringBuilder sb = new StringBuilder();
@@ -67,8 +82,40 @@ public class AdvancingFront
         // TODO: implement BST index 
         return search;
     }
-    
-    public AdvancingFrontNode locate( double x )
+
+    /**
+     * We use a balancing tree to locate a node smaller or equal to
+     * given key value
+     * 
+     * @param x
+     * @return
+     */
+    public AdvancingFrontNode locateNode( TriangulationPoint point )
+    {
+//        System.out.println( this._searchTree );
+//        System.out.println( this );
+
+//        AdvancingFrontNode node1, node2;
+//        node1 = locateNode( point.getX() );
+//        System.out.println( "1-locateNode[p,np]=[" + point.getX() + "," + node1.point.getX() + "]" );
+        return locateNode( point.getX() );
+//        search = _searchTree.findLowerOrEqual( point.getX() );        
+//        return search;
+//        node2 = locateNode( Double.valueOf( point.getX() ) );
+////        System.out.println( "2-locateNode[p,np]=[" + point.getX() + "," + node2.point.getX() + "]" );
+//        return node2;
+
+//        search = _searchTree.findLowerOrEqual( point.getX() );        
+//        return search;
+    }
+
+    private AdvancingFrontNode locateNode( Double key )
+    {
+        search = _searchTree.findLowerOrEqual( key );        
+        return search;
+    }
+
+    private AdvancingFrontNode locateNode( double x )
     {
         AdvancingFrontNode node = findSearchNode(x);
         if( x < node.value )
@@ -96,6 +143,13 @@ public class AdvancingFront
         return null;
     }
     
+    /**
+     * This implementation will use simple node traversal algorithm to find
+     * a point on the front
+     * 
+     * @param point
+     * @return
+     */
     public AdvancingFrontNode locatePoint( final TriangulationPoint point )
     {
         final double px = point.getX();

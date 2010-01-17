@@ -40,6 +40,7 @@ public class AdvancingFrontNode
     protected AdvancingFrontNode next = null;
     protected AdvancingFrontNode prev = null;
 
+    protected final Double key; // XXX: BST
     protected final double value;
     protected final TriangulationPoint point;
     protected DelaunayTriangle triangle;
@@ -48,6 +49,7 @@ public class AdvancingFrontNode
     {
         this.point = point;
         value = point.getX();
+        key = Double.valueOf( value ); // XXX: BST
     }    
 
     public AdvancingFrontNode getNext()

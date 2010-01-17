@@ -74,6 +74,14 @@ public class FloatBufferPoint extends TriangulationPoint
         return _fb.get( _iz );
     }
 
+    @Override
+    public void set( double x, double y, double z )
+    {
+        _fb.put( _ix, (float)x );
+        _fb.put( _iy, (float)y );
+        _fb.put( _iz, (float)z );
+    }
+    
     public static TriangulationPoint[] toPoints( FloatBuffer fb )
     {
         FloatBufferPoint[] points = new FloatBufferPoint[fb.limit()/3];

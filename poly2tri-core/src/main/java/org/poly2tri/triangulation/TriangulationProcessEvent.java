@@ -32,5 +32,5 @@ package org.poly2tri.triangulation;
 
 public enum TriangulationProcessEvent
 {
-    Started,Readable,Failed,Done
+    Started,Waiting,Failed,Aborted,Done
 }

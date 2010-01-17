@@ -33,13 +33,16 @@ package org.poly2tri.triangulation.sets;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.poly2tri.triangulation.Triangulatable;
+import org.poly2tri.triangulation.TriangulationContext;
+import org.poly2tri.triangulation.TriangulationMode;
 import org.poly2tri.triangulation.TriangulationPoint;
 import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
 
-public class PointSet
+public class PointSet implements Triangulatable
 {
     List<TriangulationPoint> _points;
-    List<DelaunayTriangle> m_triangles;
+    List<DelaunayTriangle> _triangles;
     
     public PointSet( List<TriangulationPoint> points )
     {
@@ -47,6 +50,12 @@ public class PointSet
         _points.addAll( points );
     }
     
+    @Override
+    public TriangulationMode getTriangulationMode()
+    {
+        return TriangulationMode.UNCONSTRAINED;
+    }
+
     public List<TriangulationPoint> getPoints()
     {
         return _points;
@@ -54,36 +63,35 @@ public class PointSet
     
     public List<DelaunayTriangle> getTriangles()
     {
-        if( m_triangles == null )
-        {
-            m_triangles = new ArrayList<DelaunayTriangle>( _points.size() );
-        }
-        return m_triangles;
+        return _triangles;
     }
     
     public void addTriangle( DelaunayTriangle t )
     {
-        if( m_triangles == null )
-        {
-            m_triangles = new ArrayList<DelaunayTriangle>( _points.size() );
-        }
-        m_triangles.add( t );
+        _triangles.add( t );
+    }
+
+    public void addTriangles( List<DelaunayTriangle> list )
+    {
+        _triangles.addAll( list );
     }
 
     public void clearTriangulation()
     {
-        if( m_triangles == null )
+        _triangles.clear();            
+    }
+
+    @Override
+    public void prepare( TriangulationContext<?> tcx )
+    {
+        if( _triangles == null )
         {
-            m_triangles = new ArrayList<DelaunayTriangle>( _points.size() );            
+            _triangles = new ArrayList<DelaunayTriangle>( _points.size() );            
         }
         else
         {
-            m_triangles.clear();            
+            _triangles.clear();                        
         }
-    }
-
-    public void populate( ArrayList<TriangulationPoint> points )
-    {
-        points.addAll( _points );
+        tcx.addPoints( _points );
     }
 }

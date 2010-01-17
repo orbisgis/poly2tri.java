@@ -37,11 +37,10 @@ import static org.poly2tri.triangulation.TriangulationUtil.smartIncircle;
 
 import java.util.List;
 
+import org.poly2tri.triangulation.TriangulationMode;
 import org.poly2tri.triangulation.TriangulationPoint;
-import org.poly2tri.triangulation.TriangulationContext.TriangulationMode;
 import org.poly2tri.triangulation.TriangulationUtil.Orientation;
 import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
-import org.poly2tri.triangulation.point.TPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,7 +86,7 @@ public class DTSweep
 //        }
                 
         // Finalize triangulation
-        if( tcx.getTriangulationMode() ==  TriangulationMode.Polygon )
+        if( tcx.getTriangulationMode() ==  TriangulationMode.POLYGON )
         {
             finalizationPolygon( tcx );
         }
@@ -126,6 +125,7 @@ public class DTSweep
                     edgeEvent( tcx, e, node );
                 }
             }
+            tcx.update( null );
         }
     }
 
@@ -280,7 +280,9 @@ public class DTSweep
         newNode.next = node.next;
         newNode.prev = node;
         node.next.prev = newNode;
-        node.next = newNode;   
+        node.next = newNode;  
+        
+        tcx.addNode( newNode ); // XXX: BST
         
         if( tcx.isDebugEnabled() ) { tcx.getDebugContext().setActiveNode( newNode ); }
         
@@ -303,24 +305,29 @@ public class DTSweep
                                    DTSweepConstraint  edge, 
                                    AdvancingFrontNode node )
     {
-        tcx.edgeEvent.constrainedEdge = edge;
-        tcx.edgeEvent.right = edge.p.getX() > edge.q.getX();
-        
-        if( tcx.isDebugEnabled() ) { tcx.getDebugContext().setPrimaryTriangle( node.triangle ); }
-
-        if( isEdgeSideOfTriangle( node.triangle, edge.p, edge.q ) )
+        try
         {
-            return;
+            tcx.edgeEvent.constrainedEdge = edge;
+            tcx.edgeEvent.right = edge.p.getX() > edge.q.getX();
+            
+            if( tcx.isDebugEnabled() ) { tcx.getDebugContext().setPrimaryTriangle( node.triangle ); }
+
+            if( isEdgeSideOfTriangle( node.triangle, edge.p, edge.q ) )
+            {
+                return;
+            }
+
+            // For now we will do all needed filling
+            // TODO: integrate with flip process might give some better performance 
+            //       but for now this avoid the issue with cases that needs both flips and fills
+            fillEdgeEvent( tcx, edge, node );
+
+            edgeEvent( tcx, edge.p, edge.q , node.triangle, edge.q );            
         }
-
-        // For now we will do all needed filling
-        // TODO: integrate with flip process might give some better performance 
-        //       but for now this avoid the issue with cases that needs both flips and fills
-        fillEdgeEvent( tcx, edge, node );
-
-        edgeEvent( tcx, edge.p, edge.q , node.triangle, edge.q );
-
-        return;
+        catch( PointOnEdgeException e )
+        {
+            logger.warn( "Skipping edge: {}", e.getMessage() );
+        }
     }
     
     private static void fillEdgeEvent( DTSweepContext tcx, DTSweepConstraint edge, AdvancingFrontNode node )
@@ -548,7 +555,7 @@ public class DTSweep
 //            edgeEvent( tcx, p1, eq, triangle, point );
 //            edgeEvent( tcx, ep, p1, triangle, p1 );
 //            return;
-            throw new RuntimeException( "EdgeEvent - Collinear not supported" );                
+            throw new PointOnEdgeException( "EdgeEvent - Point on constrained edge not supported yet" );                
         }
 
         p2 = triangle.pointCW( point );
@@ -559,7 +566,7 @@ public class DTSweep
 //            edgeEvent( tcx, p2, eq, triangle, point );
 //            edgeEvent( tcx, ep, p2, triangle, p2 );
 //            return;
-            throw new RuntimeException( "EdgeEvent - Collinear not supported" );                
+            throw new PointOnEdgeException( "EdgeEvent - Point on constrained edge not supported yet" );                
         }
 
         if( o1 == o2 )
@@ -710,7 +717,8 @@ public class DTSweep
         }
         else
         {
-            throw new RuntimeException("[Unsupported] Opposing point on constrained edge");
+            // TODO: implement support for point on constraint edge
+            throw new PointOnEdgeException("Point on constrained edge not supported yet");
         }                    
     }
     
@@ -877,7 +885,8 @@ public class DTSweep
     {
         if( orient2d( node.point, node.next.point, node.next.next.point ) == Orientation.CCW )
         {
-            tcx.basin.leftNode = node.next.next;
+//            tcx.basin.leftNode = node.next.next;
+            tcx.basin.leftNode = node;
         }
         else
         {
@@ -887,7 +896,7 @@ public class DTSweep
         // Find the bottom and right node
         tcx.basin.bottomNode = tcx.basin.leftNode;
         while(   tcx.basin.bottomNode.hasNext() 
-              && tcx.basin.bottomNode.point.getY() > tcx.basin.bottomNode.next.point.getY() )
+              && tcx.basin.bottomNode.point.getY() >= tcx.basin.bottomNode.next.point.getY() )
         {
             tcx.basin.bottomNode = tcx.basin.bottomNode.next;
         }
@@ -980,7 +989,6 @@ public class DTSweep
         {
             height = tcx.basin.rightNode.getPoint().getY() - node.getPoint().getY();            
         }
-        // if shallow stop filling
         if( tcx.basin.width > height ) 
         {
             return true;

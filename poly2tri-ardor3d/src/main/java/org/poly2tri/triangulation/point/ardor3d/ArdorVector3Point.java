@@ -42,6 +42,12 @@ public class ArdorVector3Point extends TriangulationPoint
         return _p.getZf();
     }
 
+    @Override
+    public void set( double x, double y, double z )
+    {
+        _p.set( x, y, z );
+    }
+
     public static List<TriangulationPoint> toPoints( Vector3[] vpoints )
     {
         ArrayList<TriangulationPoint> points = new ArrayList<TriangulationPoint>(vpoints.length);
@@ -59,6 +65,27 @@ public class ArdorVector3Point extends TriangulationPoint
         for( Vector3 point : vpoints )
         {
             points.add( new ArdorVector3Point(point) );
+        }        
+        return points;
+    }
+
+    public static List<TriangulationPoint> toPolygonPoints( Vector3[] vpoints )
+    {
+        ArrayList<TriangulationPoint> points = new ArrayList<TriangulationPoint>(vpoints.length);
+        for( int i=0; i<vpoints.length; i++ )
+        {
+            points.add( new ArdorVector3PolygonPoint(vpoints[i]) );
+        }        
+        return points;
+    }
+
+    public static List<TriangulationPoint> toPolygonPoints( ArrayList<Vector3> vpoints )
+    {
+        int i=0;
+        ArrayList<TriangulationPoint> points = new ArrayList<TriangulationPoint>(vpoints.size());
+        for( Vector3 point : vpoints )
+        {
+            points.add( new ArdorVector3PolygonPoint(point) );
         }        
         return points;
     }

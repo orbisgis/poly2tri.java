@@ -32,5 +32,5 @@ package org.poly2tri.triangulation;
 
 public interface TriangulationProcessListener
 {
-    public void triangulationEvent( TriangulationProcessEvent e );
+    public void triangulationEvent( TriangulationProcessEvent e, Triangulatable unit );
 }

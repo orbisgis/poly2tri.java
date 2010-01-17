@@ -16,7 +16,7 @@ public class DTSweepDebugContext extends TriangulationDebugContext
     protected AdvancingFrontNode _activeNode;
     protected DTSweepConstraint _activeConstraint;   
         
-    public DTSweepDebugContext( TriangulationContext tcx )
+    public DTSweepDebugContext( DTSweepContext tcx )
     {
         super( tcx );
     }
@@ -56,13 +56,13 @@ public class DTSweepDebugContext extends TriangulationDebugContext
     public void setPrimaryTriangle( DelaunayTriangle triangle )
     {
         _primaryTriangle = triangle;        
-        _tcx.suspend("setPrimaryTriangle");
+        _tcx.update("setPrimaryTriangle");
     }
 
     public void setSecondaryTriangle( DelaunayTriangle triangle )
     {
         _secondaryTriangle = triangle;        
-        _tcx.suspend("setSecondaryTriangle");
+        _tcx.update("setSecondaryTriangle");
     }
     
     public void setActivePoint( TriangulationPoint point )
@@ -73,13 +73,13 @@ public class DTSweepDebugContext extends TriangulationDebugContext
     public void setActiveConstraint( DTSweepConstraint e )
     {
         _activeConstraint = e;
-        _tcx.suspend("setWorkingSegment");
+        _tcx.update("setWorkingSegment");
     }
 
     public void setActiveNode( AdvancingFrontNode node )
     {
         _activeNode = node;        
-        _tcx.suspend("setWorkingNode");
+        _tcx.update("setWorkingNode");
     }
 
     @Override

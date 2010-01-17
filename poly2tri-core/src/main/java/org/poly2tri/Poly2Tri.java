@@ -31,16 +31,16 @@
 package org.poly2tri;
 
 import org.poly2tri.polygon.Polygon;
+import org.poly2tri.polygon.PolygonSet;
+import org.poly2tri.triangulation.Triangulatable;
 import org.poly2tri.triangulation.TriangulationAlgorithm;
 import org.poly2tri.triangulation.TriangulationContext;
-import org.poly2tri.triangulation.TriangulationDebugContext;
+import org.poly2tri.triangulation.TriangulationMode;
 import org.poly2tri.triangulation.TriangulationProcess;
-import org.poly2tri.triangulation.TriangulationContext.TriangulationMode;
 import org.poly2tri.triangulation.delaunay.sweep.DTSweep;
 import org.poly2tri.triangulation.delaunay.sweep.DTSweepContext;
 import org.poly2tri.triangulation.sets.ConstrainedPointSet;
 import org.poly2tri.triangulation.sets.PointSet;
-import org.poly2tri.triangulation.sets.PolygonSet;
 import org.poly2tri.triangulation.util.PolygonGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,29 +53,31 @@ public class Poly2Tri
     
     public static void triangulate( PolygonSet ps )
     {
-        TriangulationContext tcx = createContext( _defaultAlgorithm );
-        tcx.setTriangulationMode( TriangulationMode.Polygon );
-        tcx.setPointSet( ps );
-        triangulate( _defaultAlgorithm, tcx );
+        TriangulationContext<?> tcx = createContext( _defaultAlgorithm );
+        for( Polygon p : ps.getPolygons() )
+        {
+            tcx.prepareTriangulation( p );
+            triangulate( tcx );            
+            tcx.clear();
+        }
     }
 
-    public static void triangulate( ConstrainedPointSet ps )
+    public static void triangulate( Polygon p )
     {
-        TriangulationContext tcx = createContext( _defaultAlgorithm );
-        tcx.setTriangulationMode( TriangulationMode.CDT );
-        tcx.setPointSet( ps );
-        triangulate( _defaultAlgorithm, tcx );        
+        triangulate( _defaultAlgorithm, p );            
+    }
+
+    public static void triangulate( ConstrainedPointSet cps )
+    {
+        triangulate( _defaultAlgorithm, cps );        
     }
 
     public static void triangulate( PointSet ps )
     {
-        TriangulationContext tcx = createContext( _defaultAlgorithm );
-        tcx.setTriangulationMode( TriangulationMode.DT );
-        tcx.setPointSet( ps );
-        triangulate( _defaultAlgorithm, tcx );                
+        triangulate( _defaultAlgorithm, ps );                
     }
 
-    public static TriangulationContext createContext( TriangulationAlgorithm algorithm )
+    public static TriangulationContext<?> createContext( TriangulationAlgorithm algorithm )
     {
         switch( algorithm )
         {
@@ -85,18 +87,26 @@ public class Poly2Tri
         }
     }
 
-    private static void triangulate( TriangulationAlgorithm algorithm, 
-                                     TriangulationContext tcx )
+    public static void triangulate( TriangulationAlgorithm algorithm,
+                                    Triangulatable t )
     {
-        tcx.prepareTriangulation();
-        long time = System.nanoTime();
-        switch( algorithm )
+        TriangulationContext<?> tcx;
+        
+//        long time = System.nanoTime();
+        tcx = createContext( algorithm );
+        tcx.prepareTriangulation( t );
+        triangulate( tcx );
+//        logger.info( "Triangulation of {} points [{}ms]", tcx.getPoints().size(), ( System.nanoTime() - time ) / 1e6 );
+    }
+    
+    public static void triangulate( TriangulationContext<?> tcx )
+    {
+        switch( tcx.algorithm() )
         {
             case DTSweep:
             default:
                DTSweep.triangulate( (DTSweepContext)tcx );
-        }
-        logger.info( "Triangulation of {} points [{}ms]", tcx.getPoints().size(), ( System.nanoTime() - time ) / 1e6 );
+        }        
     }
     
     /**
@@ -112,7 +122,6 @@ public class Poly2Tri
          */
         Polygon poly = PolygonGenerator.RandomCircleSweep2( 50, 50000 );
         TriangulationProcess process = new TriangulationProcess();
-        PolygonSet ps = new PolygonSet( poly ); 
-        process.triangulate( ps );
+        process.triangulate( poly );
     }
 }

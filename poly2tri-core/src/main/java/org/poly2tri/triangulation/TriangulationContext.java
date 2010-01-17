@@ -34,23 +34,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
-import org.poly2tri.triangulation.sets.PointSet;
 
 public abstract class TriangulationContext<A extends TriangulationDebugContext>
 {
-    public enum TriangulationMode
-    {
-        DT,CDT,Polygon
-    }
-    
     protected A _debug;
     protected boolean _debugEnabled = false;
     
     protected ArrayList<DelaunayTriangle> _triList = new ArrayList<DelaunayTriangle>();
 
-    protected PointSet _pointSet;
     protected ArrayList<TriangulationPoint> _points = new ArrayList<TriangulationPoint>(200);
     protected TriangulationMode _triangulationMode;
+    protected Triangulatable _triUnit;
 
     private boolean _terminated = false;
     private boolean _waitUntilNotified;
@@ -64,16 +58,30 @@ public abstract class TriangulationContext<A extends TriangulationDebugContext>
         _stepCount++;
     }
 
-    public abstract void prepareTriangulation();
+    public abstract TriangulationAlgorithm algorithm();
+    
+    public void prepareTriangulation( Triangulatable t )
+    {
+        _triUnit = t;
+        _triangulationMode = t.getTriangulationMode();
+        t.prepare( this );
+    }
+    
+    public abstract TriangulationConstraint newConstraint( TriangulationPoint a, TriangulationPoint b );
     
     public void addToList( DelaunayTriangle triangle )
     {
         _triList.add( triangle );
     }
-
+        
     public List<DelaunayTriangle> getTriangles()
     {
         return _triList;
+    }
+
+    public Triangulatable getTriangulatable()
+    {
+        return _triUnit;
     }
     
     public List<TriangulationPoint> getPoints()
@@ -81,7 +89,7 @@ public abstract class TriangulationContext<A extends TriangulationDebugContext>
         return _points;
     }
 
-    public synchronized void suspend(String message)
+    public synchronized void update(String message)
     {
         if( _debugEnabled )
         {
@@ -93,7 +101,7 @@ public abstract class TriangulationContext<A extends TriangulationDebugContext>
                     if( _stepTime > 0 )
                     {
                         wait( (int)_stepTime );
-                        /** Can we resume execution or are we being read */ 
+                        /** Can we resume execution or are we expected to wait? */ 
                         if( _waitUntilNotified )
                         {
                             wait();
@@ -109,7 +117,7 @@ public abstract class TriangulationContext<A extends TriangulationDebugContext>
             }
             catch( InterruptedException e )
             {
-                suspend("Triangulation was interrupted");
+                update("Triangulation was interrupted");
             }
         }
         if( _terminated )
@@ -129,27 +137,14 @@ public abstract class TriangulationContext<A extends TriangulationDebugContext>
         _stepCount=0;
     }
 
-    public void setTriangulationMode( TriangulationMode triangulationMode )
-    {
-        _triangulationMode = triangulationMode;
-    }
-    
     public TriangulationMode getTriangulationMode()
     {
         return _triangulationMode;
     }
     
-    public void setPointSet( PointSet ps ) 
-    { 
-        // Make sure we got a clear triangle list before starting
-        ps.clearTriangulation();
-        _pointSet = ps; 
-    }
-    public PointSet getPointSet() { return _pointSet; }
-
-    public synchronized boolean waitUntilNotified(boolean b)
+    public synchronized void waitUntilNotified(boolean b)
     {
-        return _waitUntilNotified = b;
+        _waitUntilNotified = b;
     }
 
     public void terminateTriangulation()
@@ -169,7 +164,8 @@ public abstract class TriangulationContext<A extends TriangulationDebugContext>
         return _debug;
     }
     
-    public abstract class DebugContext
+    public void addPoints( List<TriangulationPoint> points )
     {
+        _points.addAll( points );
     }
 }

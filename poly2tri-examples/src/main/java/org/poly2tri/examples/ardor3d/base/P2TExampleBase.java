@@ -3,13 +3,13 @@ package org.poly2tri.examples.ardor3d.base;
 import java.nio.FloatBuffer;
 import java.util.List;
 
+import org.poly2tri.polygon.PolygonSet;
 import org.poly2tri.triangulation.TriangulationAlgorithm;
 import org.poly2tri.triangulation.TriangulationPoint;
 import org.poly2tri.triangulation.TriangulationProcess;
 import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
 import org.poly2tri.triangulation.delaunay.sweep.DTSweepContext;
 import org.poly2tri.triangulation.sets.PointSet;
-import org.poly2tri.triangulation.sets.PolygonSet;
 import org.poly2tri.triangulation.tools.ardor3d.ArdorMeshMapper;
 
 import com.ardor3d.framework.Canvas;
@@ -97,13 +97,14 @@ public abstract class P2TExampleBase extends P2TSimpleExampleBase
         _exampleInfo[2].setText("[End] Toggle vertex points");
     }
     
+    @Override
     protected void updateExample(final ReadOnlyTimer timer) 
     {
         if( _process.isDone() && _processTimestamp != _process.getTimestamp() )
         {
             _processTimestamp = _process.getTimestamp();
             updateMesh();
-            _exampleInfo[0].setText("[" + _process.getTriangulationTime() + "ms] " + _polygonSet.pointCount() + " points" );
+            _exampleInfo[0].setText("[" + _process.getTriangulationTime() + "ms] " + _process.getPointCount() + " points" );
         }
     }
 
@@ -129,8 +130,8 @@ public abstract class P2TExampleBase extends P2TSimpleExampleBase
             }
             else
             {
-                _cdtSweepMesh.update( _polygonSet.getTriangles() );                
-                _cdtSweepPoints.update( _polygonSet.getPoints() );
+                _cdtSweepMesh.update( _polygonSet.getPolygons().get(0).getTriangles() );                
+                _cdtSweepPoints.update( _polygonSet.getPolygons().get(0).getPoints() );
             }
         }
     }

@@ -1,3 +1,33 @@
+/* Poly2Tri
+ * Copyright (c) 2009-2010, Poly2Tri Contributors
+ * http://code.google.com/p/poly2tri/
+ *
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *
+ * * Redistributions of source code must retain the above copyright notice,
+ *   this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
+ *   and/or other materials provided with the distribution.
+ * * Neither the name of Poly2Tri nor the names of its contributors may be
+ *   used to endorse or promote products derived from this software without specific
+ *   prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 package org.poly2tri.examples.ardor3d;
 
 import java.io.IOException;
@@ -6,10 +36,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.poly2tri.examples.ardor3d.base.P2TExampleBase;
-import org.poly2tri.examples.ardor3d.misc.PolygonLoader;
+import org.poly2tri.examples.ardor3d.misc.ExampleModels;
+import org.poly2tri.examples.ardor3d.misc.DataLoader;
 import org.poly2tri.examples.ardor3d.misc.Triangle;
 import org.poly2tri.polygon.Polygon;
-import org.poly2tri.triangulation.TriangulationContext;
+import org.poly2tri.polygon.PolygonSet;
 import org.poly2tri.triangulation.TriangulationPoint;
 import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
 import org.poly2tri.triangulation.delaunay.sweep.AdvancingFront;
@@ -18,7 +49,6 @@ import org.poly2tri.triangulation.delaunay.sweep.DTSweepConstraint;
 import org.poly2tri.triangulation.delaunay.sweep.DTSweepContext;
 import org.poly2tri.triangulation.point.TPoint;
 import org.poly2tri.triangulation.sets.ConstrainedPointSet;
-import org.poly2tri.triangulation.sets.PolygonSet;
 import org.poly2tri.triangulation.util.PolygonGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +83,8 @@ public class CDTModelExample extends P2TExampleBase
 {
     private final static Logger logger = LoggerFactory.getLogger( CDTModelExample.class );
     
+    private ExampleModels m_currentModel = ExampleModels.Two;
+
     private static double SCALE = 50;
         
     private Line m_line;
@@ -154,7 +186,7 @@ public class CDTModelExample extends P2TExampleBase
         {
             try
             {
-                poly = PolygonLoader.loadModel( model, SCALE );
+                poly = DataLoader.loadModel( model, SCALE );
                 _polygonSet = new PolygonSet( poly );        
             }
             catch( IOException e )
@@ -621,65 +653,4 @@ public class CDTModelExample extends P2TExampleBase
             }
         }        
     }
-
-    private ExampleModels m_currentModel = ExampleModels.Test;
-
-    public enum ExampleModels
-    {
-        Test            ("test.dat",1,0,0,true),
-        Two             ("2.dat",1,0,0,true),
-        Debug           ("debug.dat",1,0,0,false),
-        Debug2          ("debug2.dat",1,0,0,false),
-        Bird            ("bird.dat",1,0,0,false),
-        Custom          ("funny.dat",1,0,0,false),
-        Diamond         ("diamond.dat",1,0,0,false),
-        Dude            ("dude.dat",1,-0.1,0,true),
-        Nazca_heron     ("nazca_heron.dat",1.3,0,0.35,false),
-        Nazca_monkey    ("nazca_monkey.dat",1,0,0,false),
-        Star            ("star.dat",1,0,0,false),
-        Strange         ("strange.dat",1,0,0,true),
-        Tank            ("tank.dat",1.3,0,0,true);
-        
-        private final static String m_basePath = "org/poly2tri/examples/data/"; 
-        private String m_filename;
-        private double m_scale;
-        private double m_x;
-        private double m_y;
-        private boolean _invertedYAxis;
-        
-        ExampleModels( String filename, double scale, double x, double y, boolean invertedY )
-        {
-            m_filename = filename;
-            m_scale = scale;
-            m_x = x;
-            m_y = y;
-            _invertedYAxis = invertedY;
-        }
-        
-        public String getFilename()
-        {
-            return m_basePath + m_filename;
-        }
-
-        public double getScale()
-        {
-            return m_scale;
-        }
-        
-        public double getX()
-        {
-            return m_x;
-        }
-        
-        public double getY()
-        {
-            return m_y;
-        }
-
-        public boolean invertedYAxis()
-        {
-            return _invertedYAxis;
-        }
-    }
-
 }

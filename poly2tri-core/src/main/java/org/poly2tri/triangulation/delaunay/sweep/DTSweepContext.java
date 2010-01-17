@@ -32,6 +32,9 @@ package org.poly2tri.triangulation.delaunay.sweep;
 
 import java.util.Collections;
 
+import org.poly2tri.triangulation.Triangulatable;
+import org.poly2tri.triangulation.TriangulationAlgorithm;
+import org.poly2tri.triangulation.TriangulationConstraint;
 import org.poly2tri.triangulation.TriangulationContext;
 import org.poly2tri.triangulation.TriangulationPoint;
 import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
@@ -55,9 +58,9 @@ public class DTSweepContext extends TriangulationContext<DTSweepDebugContext>
     /** Advancing front **/
     protected AdvancingFront aFront;
     /** head point used with advancing front */
-    private TriangulationPoint m_head;
+    private TriangulationPoint _head;
     /** tail point used with advancing front */
-    private TriangulationPoint m_tail;
+    private TriangulationPoint _tail;
     protected Basin basin = new Basin();
     protected EdgeEvent edgeEvent = new EdgeEvent();
     
@@ -92,11 +95,6 @@ public class DTSweepContext extends TriangulationContext<DTSweepDebugContext>
 //            }
 //        }
 //        triangle.clearNeighbors();
-        if( isDebugEnabled() )
-        {
-            getDebugContext().setPrimaryTriangle( null );
-            suspend("Triangle removed from map");
-        }
     }
 
     public void meshClean( DelaunayTriangle triangle )
@@ -109,7 +107,7 @@ public class DTSweepContext extends TriangulationContext<DTSweepDebugContext>
         if( triangle != null && !triangle.isInterior() )
         {
             triangle.isInterior( true );
-            _pointSet.addTriangle( triangle );
+            _triUnit.addTriangle( triangle );
             for( int i = 0; i < 3; i++ )
             {
                 if( !triangle.cEdge[i] )
@@ -131,58 +129,48 @@ public class DTSweepContext extends TriangulationContext<DTSweepDebugContext>
         return aFront;
     }
 
-    public void setHead( TriangulationPoint p1 ) { m_head = p1; }
-    public TriangulationPoint getHead() { return m_head; }
+    public void setHead( TriangulationPoint p1 ) { _head = p1; }
+    public TriangulationPoint getHead() { return _head; }
 
-    public void setTail( TriangulationPoint p1 ) { m_tail = p1; }
-    public TriangulationPoint getTail() { return m_tail; }
+    public void setTail( TriangulationPoint p1 ) { _tail = p1; }
+    public TriangulationPoint getTail() { return _tail; }
 
     public void addNode( AdvancingFrontNode node )
     {
 //        System.out.println( "add:" + node.key + ":" + System.identityHashCode(node.key));
 //        m_nodeTree.put( node.getKey(), node );
+        aFront.addNode( node );
     }
 
     public void removeNode( AdvancingFrontNode node )
     {
 //        System.out.println( "remove:" + node.key + ":" + System.identityHashCode(node.key));
 //        m_nodeTree.delete( node.getKey() );
+        aFront.removeNode( node );
     }
 
     public AdvancingFrontNode locateNode( TriangulationPoint point )
     {
-        // TODO implement tree
-//        System.out.println( m_nodeTree );
-//        System.out.println( aFront );
-//        AdvancingFrontNode node = m_nodeTree.findSmallerOrEqual( point.getX() );
-//        return node;
-//        System.out.println( "1-locateNode[p,np]=[" + point.getX() + "," + node.point.getX() + "]" );
-//        node = aFront.locate( point );
-//        System.out.println( "2-locateNode[p,np]=[" + point.getX() + "," + node.point.getX() + "]" );
-//        return node;
-//        return m_nodeTree.findSmallerOrEqual( point.getX() );
-        return aFront.locate( point.getX() );
+        return aFront.locateNode( point );
     }
 
     public void createAdvancingFront()
     {
-        AdvancingFrontNode middle;
+        AdvancingFrontNode head,tail,middle;
         // Initial triangle
         DelaunayTriangle iTriangle = new DelaunayTriangle( _points.get(0), 
                                                            getTail(), 
                                                            getHead() );
-//        DelaunayTriangle iTriangle = new DelaunayTriangle( new TriangulationPoint[] { _pointSet.getPoints().get(0), 
-//                                                                                      getTail(), 
-//                                                                                      getHead() } );
         addToList( iTriangle );
-        aFront = new AdvancingFront();
         
-        aFront.head = new AdvancingFrontNode( iTriangle.points[1] );
-        aFront.head.triangle = iTriangle;
+        head = new AdvancingFrontNode( iTriangle.points[1] );
+        head.triangle = iTriangle;
         middle = new AdvancingFrontNode( iTriangle.points[0] );
         middle.triangle = iTriangle;
-        aFront.tail = new AdvancingFrontNode( iTriangle.points[2] );
-        aFront.search = middle;
+        tail = new AdvancingFrontNode( iTriangle.points[2] );
+
+        aFront = new AdvancingFront( head, tail ); 
+        aFront.addNode( middle );
         
         // TODO: I think it would be more intuitive if head is middles next and not previous
         //       so swap head and tail
@@ -230,14 +218,12 @@ public class DTSweepContext extends TriangulationContext<DTSweepDebugContext>
     }
 
     @Override
-    public void prepareTriangulation()
+    public void prepareTriangulation( Triangulatable t )
     {
+        super.prepareTriangulation( t );
+
         double xmax, xmin;
         double ymax, ymin;
-
-        long time = System.nanoTime();
-
-        _pointSet.populate( _points );
 
         xmax = xmin = _points.get(0).getX();
         ymax = ymin = _points.get(0).getY();
@@ -262,15 +248,28 @@ public class DTSweepContext extends TriangulationContext<DTSweepDebugContext>
         setHead( p1 );
         setTail( p2 );
 
+//        long time = System.nanoTime();
         // Sort the points along y-axis
         Collections.sort( _points, _comparator );
-        logger.info( "Triangulation setup [{}ms]", ( System.nanoTime() - time ) / 1e6 );
+//        logger.info( "Triangulation setup [{}ms]", ( System.nanoTime() - time ) / 1e6 );
     }
 
 
     public void finalizeTriangulation()
     {
-        _pointSet.getTriangles().addAll( _triList );
+        _triUnit.addTriangles( _triList );
         _triList.clear();
+    }
+
+    @Override
+    public TriangulationConstraint newConstraint( TriangulationPoint a, TriangulationPoint b )
+    {
+        return new DTSweepConstraint( a, b );        
+    }
+
+    @Override
+    public TriangulationAlgorithm algorithm()
+    {
+        return TriangulationAlgorithm.DTSweep;
     }
 }

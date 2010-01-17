@@ -2,9 +2,10 @@ package org.poly2tri.triangulation.delaunay.sweep;
 
 public class AdvancingFrontIndex<A>
 {
+    double _min,_max;
     IndexNode<A> _root;
     
-    public AdvancingFrontIndex( int depth )
+    public AdvancingFrontIndex( double min, double max, int depth )
     {
         if( depth > 5 ) depth = 5;
         _root = createIndex( depth );

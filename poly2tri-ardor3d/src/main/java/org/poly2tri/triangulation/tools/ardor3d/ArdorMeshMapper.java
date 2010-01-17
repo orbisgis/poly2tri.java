@@ -4,8 +4,12 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
 
+import org.poly2tri.polygon.Polygon;
+import org.poly2tri.position.CoordinateTransformer;
+import org.poly2tri.position.NoTransform;
 import org.poly2tri.triangulation.TriangulationPoint;
 import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
+import org.poly2tri.triangulation.point.TPoint;
 import org.poly2tri.triangulation.sets.PointSet;
 
 import com.ardor3d.renderer.IndexMode;
@@ -14,9 +18,20 @@ import com.ardor3d.util.geom.BufferUtils;
 
 public class ArdorMeshMapper
 {
-    public static void updateTriangleMesh( Mesh mesh, List<DelaunayTriangle> triangles )
+    private static final CoordinateTransformer _pc = new NoTransform();
+    
+    public static void updateTriangleMesh( Mesh mesh, 
+                                           List<DelaunayTriangle> triangles )
+    {
+        updateTriangleMesh( mesh, triangles, _pc );
+    }
+    
+    public static void updateTriangleMesh( Mesh mesh, 
+                                           List<DelaunayTriangle> triangles,
+                                           CoordinateTransformer pc )
     {
         FloatBuffer vertBuf;
+        TPoint point;
 
         mesh.getMeshData().setIndexMode( IndexMode.Triangles );
 
@@ -24,6 +39,8 @@ public class ArdorMeshMapper
         {
             return;
         }
+        
+        point = new TPoint(0,0,0);
         
         int size = 3*3*triangles.size();
         prepareVertexBuffer( mesh, size );
@@ -34,7 +51,10 @@ public class ArdorMeshMapper
         {
             for( int i=0; i<3; i++ )
             {
-                vertBuf.put(t.points[i].getXf()).put(t.points[i].getYf()).put(0);
+                pc.transform( t.points[i], point );
+                vertBuf.put(point.getXf());
+                vertBuf.put(point.getYf());
+                vertBuf.put(point.getZf());
             }
         }
     }
@@ -49,6 +69,16 @@ public class ArdorMeshMapper
     public static void updateTriangleMesh( Mesh mesh, PointSet ps )
     {
         updateTriangleMesh( mesh, ps.getTriangles() );
+    }
+
+    public static void updateTriangleMesh( Mesh mesh, Polygon p )
+    {
+        updateTriangleMesh( mesh, p.getTriangles() );
+    }
+
+    public static void updateTriangleMesh( Mesh mesh, Polygon p, CoordinateTransformer pc )
+    {
+        updateTriangleMesh( mesh, p.getTriangles(), pc );
     }
 
     public static void updateVertexBuffer( Mesh mesh, List<TriangulationPoint> list )

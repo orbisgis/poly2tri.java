@@ -32,8 +32,9 @@ package org.poly2tri.triangulation.sets;
 
 import java.util.List;
 
+import org.poly2tri.triangulation.TriangulationContext;
+import org.poly2tri.triangulation.TriangulationMode;
 import org.poly2tri.triangulation.TriangulationPoint;
-import org.poly2tri.triangulation.delaunay.sweep.DTSweepConstraint;
 
 /**
  * Extends the PointSet by adding some Constraints on how it will be triangulated<br>
@@ -52,30 +53,36 @@ public class ConstrainedPointSet extends PointSet
     {
         super( points );
         _index = index;  
-        initEdges( index );
     }
 
+    @Override
+    public TriangulationMode getTriangulationMode()
+    {
+        return TriangulationMode.CONSTRAINED;
+    }
+
+    //    protected void addIndex( int[] index )
+//    {
+//        
+//    }
+    
     public int[] getEdgeIndex()
     {
         return _index;
     }
 
-    /**
-     * Setup edges according to the index array where every pair of 
-     * index values form a separate edge
-     * @param tcx
-     * @param index
-     */
-    protected void initEdges( int[] index )
+    @SuppressWarnings("unchecked")
+    @Override
+    public void prepare( TriangulationContext tcx )
     {
-        // XXX: maybe check even number of index values? 
-        for( int i = 0; i < index.length; i+=2 )
+        super.prepare( tcx );
+        for( int i = 0; i < _index.length; i+=2 )
         {
             // XXX: must change!!
-            new DTSweepConstraint( _points.get( index[i] ), _points.get( index[i+1] ) );
+            tcx.newConstraint( _points.get( _index[i] ), _points.get( _index[i+1] ) );
         }
     }
-    
+
     /**
      * TODO: TO BE IMPLEMENTED!
      * Peforms a validation on given input<br>

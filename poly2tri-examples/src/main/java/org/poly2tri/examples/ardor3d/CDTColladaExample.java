@@ -107,18 +107,17 @@ public class CDTColladaExample extends P2TExampleBase
         _cdtSweepPoints.getSceneNode().setScale( 0.13 );
         _cdtSweepPoints.getSceneNode().setTranslation( 0, -12, 0 );
 
-//        Line line = new Line();
-//        line.getMeshData().setIndexMode( IndexMode.Lines );
-//        line.setDefaultColor( ColorRGBA.GREEN );
-//        line.setScale( 0.13 );
-//        line.setTranslation( 0, -12, 0.005 );
-//        _node.attachChild( line );
-//        ArdorMeshMapper.updateVertexBuffer( line, _polygonSet.getPoints() );
-//        ArdorMeshMapper.updateIndexBuffer( line, _polygonSet.getEdgeIndex() );        
+        Line line = new Line();
+        line.getMeshData().setIndexMode( IndexMode.LineLoop );
+        line.setDefaultColor( ColorRGBA.GREEN );
+        line.setScale( 0.13 );
+        line.setTranslation( 0, -12, 0.005 );
+        _node.attachChild( line );
+        ArdorMeshMapper.updateVertexBuffer( line, _polygonSet.getPolygons().get(0).getPoints() );
     }
     
     /**
-     * Need to recreate a polygon from a triangulated 2d mesh
+     * Need to recreate a polygon without holes from a triangulated 2d mesh
      * only support IndexMode.triangles
      * 
      * There are probably much better ways to recreate a polygon from a mesh
@@ -203,6 +202,12 @@ public class CDTColladaExample extends P2TExampleBase
         return list;
     }
     
+    /**
+     * TODO: handle holes
+     * @param pointMap
+     * @param edges
+     * @return
+     */
     private static Polygon createPolygon( HashMap<PolygonPoint,PolygonPoint> pointMap,
                                           ArrayList<DTSweepConstraint> edges )
     {

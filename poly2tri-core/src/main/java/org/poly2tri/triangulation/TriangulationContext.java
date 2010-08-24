@@ -64,7 +64,7 @@ public abstract class TriangulationContext<A extends TriangulationDebugContext>
     {
         _triUnit = t;
         _triangulationMode = t.getTriangulationMode();
-        t.prepare( this );
+        t.prepareTriangulation( this );
     }
     
     public abstract TriangulationConstraint newConstraint( TriangulationPoint a, TriangulationPoint b );

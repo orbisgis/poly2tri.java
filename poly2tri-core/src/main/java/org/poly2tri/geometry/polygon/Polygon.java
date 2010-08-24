@@ -1,4 +1,4 @@
-package org.poly2tri.polygon;
+package org.poly2tri.geometry.polygon;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,7 +68,6 @@ public class Polygon implements Triangulatable
         this( Arrays.asList( points ) );
     }
 
-    @Override
     public TriangulationMode getTriangulationMode()
     {
         return TriangulationMode.POLYGON;
@@ -229,7 +228,7 @@ public class Polygon implements Triangulatable
     /**
      * Creates constraints and populates the context with points
      */
-    public void prepare( TriangulationContext<?> tcx )
+    public void prepareTriangulation( TriangulationContext<?> tcx )
     {
         if( m_triangles == null )
         {

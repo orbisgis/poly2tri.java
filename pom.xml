@@ -3,7 +3,7 @@
   <groupId>org.poly2tri</groupId>
   <artifactId>poly2tri</artifactId>
   <name>Poly2Tri</name>
-  <version>0.1.0-SNAPSHOT</version>
+  <version>0.1.1-SNAPSHOT</version>
   <description>Delaunay Triangulation Library</description>
   <packaging>pom</packaging>
   <url>http://code.google.com/p/poly2tri/</url>

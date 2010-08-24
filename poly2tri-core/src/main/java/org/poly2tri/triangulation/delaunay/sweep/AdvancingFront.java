@@ -31,7 +31,6 @@
 package org.poly2tri.triangulation.delaunay.sweep;
 
 import org.poly2tri.triangulation.TriangulationPoint;
-import org.poly2tri.triangulation.util.RedBlackBST;
 
 
 /**
@@ -43,8 +42,6 @@ public class AdvancingFront
     public AdvancingFrontNode tail;
     protected AdvancingFrontNode search;
     
-    protected RedBlackBST<Double,AdvancingFrontNode> _searchTree = new RedBlackBST<Double,AdvancingFrontNode>( RedBlackBST.BU23 );
-
     public AdvancingFront( AdvancingFrontNode head, AdvancingFrontNode tail )
     {
         this.head = head;
@@ -92,27 +89,7 @@ public class AdvancingFront
      */
     public AdvancingFrontNode locateNode( TriangulationPoint point )
     {
-//        System.out.println( this._searchTree );
-//        System.out.println( this );
-
-//        AdvancingFrontNode node1, node2;
-//        node1 = locateNode( point.getX() );
-//        System.out.println( "1-locateNode[p,np]=[" + point.getX() + "," + node1.point.getX() + "]" );
         return locateNode( point.getX() );
-//        search = _searchTree.findLowerOrEqual( point.getX() );        
-//        return search;
-//        node2 = locateNode( Double.valueOf( point.getX() ) );
-////        System.out.println( "2-locateNode[p,np]=[" + point.getX() + "," + node2.point.getX() + "]" );
-//        return node2;
-
-//        search = _searchTree.findLowerOrEqual( point.getX() );        
-//        return search;
-    }
-
-    private AdvancingFrontNode locateNode( Double key )
-    {
-        search = _searchTree.findLowerOrEqual( key );        
-        return search;
     }
 
     private AdvancingFrontNode locateNode( double x )

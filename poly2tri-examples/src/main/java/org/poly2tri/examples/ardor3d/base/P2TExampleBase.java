@@ -3,13 +3,12 @@ package org.poly2tri.examples.ardor3d.base;
 import java.nio.FloatBuffer;
 import java.util.List;
 
-import org.poly2tri.polygon.PolygonSet;
+import org.poly2tri.geometry.polygon.PolygonSet;
 import org.poly2tri.triangulation.TriangulationAlgorithm;
 import org.poly2tri.triangulation.TriangulationPoint;
 import org.poly2tri.triangulation.TriangulationProcess;
 import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
 import org.poly2tri.triangulation.delaunay.sweep.DTSweepContext;
-import org.poly2tri.triangulation.sets.PointSet;
 import org.poly2tri.triangulation.tools.ardor3d.ArdorMeshMapper;
 
 import com.ardor3d.framework.Canvas;
@@ -121,12 +120,20 @@ public abstract class P2TExampleBase extends P2TSimpleExampleBase
     
     protected void updateMesh()
     {        
-        if( _polygonSet != null )
+        if( _process.getContext().getTriangulatable() != null )
         {
             if( _process.getContext().isDebugEnabled() )
             {
-                _cdtSweepMesh.update( _process.getContext().getTriangles() );
-                _cdtSweepPoints.update( _process.getContext().getPoints() );
+                if( _process.isDone() )
+                {
+                    _cdtSweepMesh.update( _process.getContext().getTriangulatable().getTriangles() );
+                    _cdtSweepPoints.update( _process.getContext().getTriangulatable().getPoints() );                    
+                }
+                else
+                {
+                    _cdtSweepMesh.update( _process.getContext().getTriangles() );
+                    _cdtSweepPoints.update( _process.getContext().getPoints() );
+                }
             }
             else
             {

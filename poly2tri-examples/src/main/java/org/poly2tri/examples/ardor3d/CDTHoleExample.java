@@ -1,17 +1,10 @@
 package org.poly2tri.examples.ardor3d;
 
-import java.util.List;
-
 import org.poly2tri.Poly2Tri;
 import org.poly2tri.examples.ardor3d.base.P2TSimpleExampleBase;
-import org.poly2tri.polygon.Polygon;
-import org.poly2tri.polygon.PolygonPoint;
-import org.poly2tri.polygon.PolygonSet;
-import org.poly2tri.triangulation.TriangulationPoint;
-import org.poly2tri.triangulation.point.TPoint;
+import org.poly2tri.geometry.polygon.Polygon;
+import org.poly2tri.geometry.polygon.PolygonPoint;
 import org.poly2tri.triangulation.tools.ardor3d.ArdorMeshMapper;
-import org.poly2tri.triangulation.util.PointGenerator;
-import org.poly2tri.triangulation.util.PolygonGenerator;
 
 import com.ardor3d.framework.FrameHandler;
 import com.ardor3d.input.logical.LogicalLayer;

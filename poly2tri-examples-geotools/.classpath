@@ -7,10 +7,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/poly2tri-ardor3d"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/poly2tri-core"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/poly2tri-examples"/>
-	<classpathentry kind="lib" path="target/lib/classes" sourcepath="target/lib/sources">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="poly2tri-examples-geotools/target/lib/natives"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="lib" path="target/lib/classes"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

@@ -11,13 +11,15 @@ import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.opengis.feature.Feature;
 import org.opengis.feature.GeometryAttribute;
+
 import org.poly2tri.Poly2Tri;
 import org.poly2tri.examples.ardor3d.base.P2TSimpleExampleBase;
-import org.poly2tri.polygon.Polygon;
-import org.poly2tri.polygon.PolygonPoint;
-import org.poly2tri.polygon.PolygonSet;
-import org.poly2tri.position.CoordinateTransformer;
+import org.poly2tri.geometry.polygon.Polygon;
+import org.poly2tri.geometry.polygon.PolygonPoint;
+import org.poly2tri.geometry.polygon.PolygonSet;
+import org.poly2tri.transform.coordinate.CoordinateTransform;
 import org.poly2tri.triangulation.tools.ardor3d.ArdorMeshMapper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +56,9 @@ import com.ardor3d.util.ReadOnlyTimer;
 import com.ardor3d.util.TextureManager;
 import com.ardor3d.util.resource.ResourceLocatorTool;
 import com.ardor3d.util.resource.SimpleResourceLocator;
+
 import com.google.inject.Inject;
+
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
@@ -68,7 +72,7 @@ public class WorldExample extends P2TSimpleExampleBase
 {
     private final static Logger logger = LoggerFactory.getLogger( WorldExample.class );
 
-    private final static CoordinateTransformer _wgs84 = new WGS84GeodeticTransformer(100);
+    private final static CoordinateTransform _wgs84 = new WGS84GeodeticTransform(100);
     
     private Node _worldNode;
     private Skybox _skybox;

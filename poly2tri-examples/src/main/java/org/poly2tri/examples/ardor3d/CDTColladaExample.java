@@ -32,16 +32,13 @@ package org.poly2tri.examples.ardor3d;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import org.poly2tri.examples.ardor3d.base.P2TExampleBase;
-import org.poly2tri.examples.ardor3d.misc.MyPoint;
-import org.poly2tri.polygon.Polygon;
-import org.poly2tri.polygon.PolygonPoint;
-import org.poly2tri.polygon.PolygonSet;
-import org.poly2tri.triangulation.TriangulationPoint;
+import org.poly2tri.geometry.polygon.Polygon;
+import org.poly2tri.geometry.polygon.PolygonPoint;
+import org.poly2tri.geometry.polygon.PolygonSet;
 import org.poly2tri.triangulation.delaunay.sweep.DTSweepConstraint;
 import org.poly2tri.triangulation.tools.ardor3d.ArdorMeshMapper;
 

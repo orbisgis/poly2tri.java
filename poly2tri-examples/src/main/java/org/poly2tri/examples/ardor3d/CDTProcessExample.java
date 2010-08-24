@@ -82,7 +82,7 @@ public class CDTProcessExample extends P2TSimpleExampleBase implements Triangula
             final Mesh mesh = _mesh;
 
             manager = GameTaskQueueManager.getManager(_canvas.getCanvasRenderer().getRenderContext());
-            Callable<?> callable = new Callable<?>() 
+            Callable<Object> callable = new Callable<Object>() 
             {
                 @Override
                 public Object call() throws Exception

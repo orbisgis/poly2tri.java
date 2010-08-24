@@ -35,7 +35,7 @@
  <parent>
  	<artifactId>poly2tri</artifactId>
  	<groupId>org.poly2tri</groupId>
- 	<version>0.1.0-SNAPSHOT</version>
+ 	<version>0.1.1-SNAPSHOT</version>
  	<relativePath>../poly2tri/pom.xml</relativePath>
  </parent>
 

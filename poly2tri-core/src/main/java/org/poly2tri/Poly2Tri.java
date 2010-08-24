@@ -30,8 +30,8 @@
  */
 package org.poly2tri;
 
-import org.poly2tri.polygon.Polygon;
-import org.poly2tri.polygon.PolygonSet;
+import org.poly2tri.geometry.polygon.Polygon;
+import org.poly2tri.geometry.polygon.PolygonSet;
 import org.poly2tri.triangulation.Triangulatable;
 import org.poly2tri.triangulation.TriangulationAlgorithm;
 import org.poly2tri.triangulation.TriangulationContext;

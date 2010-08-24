@@ -33,8 +33,6 @@ package org.poly2tri.examples.ardor3d;
 import java.util.concurrent.Callable;
 
 import org.poly2tri.examples.ardor3d.base.P2TSimpleExampleBase;
-import org.poly2tri.polygon.Polygon;
-import org.poly2tri.polygon.PolygonPoint;
 import org.poly2tri.triangulation.Triangulatable;
 import org.poly2tri.triangulation.TriangulationProcess;
 import org.poly2tri.triangulation.TriangulationProcessEvent;

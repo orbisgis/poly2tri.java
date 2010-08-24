@@ -10,13 +10,14 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-import org.poly2tri.polygon.Polygon;
-import org.poly2tri.polygon.PolygonSet;
+import org.poly2tri.geometry.polygon.Polygon;
+import org.poly2tri.geometry.polygon.PolygonSet;
 import org.poly2tri.polygon.ardor3d.ArdorPolygon;
 import org.poly2tri.triangulation.TriangulationPoint;
 import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
 import org.poly2tri.triangulation.point.TPoint;
 import org.poly2tri.triangulation.sets.PointSet;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

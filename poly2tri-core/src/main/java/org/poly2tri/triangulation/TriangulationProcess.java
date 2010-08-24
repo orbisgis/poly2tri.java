@@ -35,8 +35,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.poly2tri.Poly2Tri;
-import org.poly2tri.polygon.Polygon;
-import org.poly2tri.polygon.PolygonSet;
+import org.poly2tri.geometry.polygon.Polygon;
+import org.poly2tri.geometry.polygon.PolygonSet;
 import org.poly2tri.triangulation.sets.ConstrainedPointSet;
 import org.poly2tri.triangulation.sets.PointSet;
 import org.slf4j.Logger;
@@ -222,7 +222,6 @@ public class TriangulationProcess implements Runnable
         return false;
     }
 
-    @Override
     public void run()
     {
         _pointCount=0;

@@ -10,12 +10,9 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-import org.poly2tri.examples.ardor3d.CDTModelExample.ExampleModels;
-import org.poly2tri.polygon.Polygon;
+import org.poly2tri.geometry.polygon.Polygon;
 import org.poly2tri.polygon.ardor3d.ArdorPolygon;
 import org.poly2tri.triangulation.TriangulationPoint;
-import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
-import org.poly2tri.triangulation.sets.PolygonSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -140,49 +137,49 @@ public class PolygonLoader
      * @param path
      * @param ps
      */
-    public static void saveTriLine( String path, PolygonSet ps )
-    {
-        FileWriter writer = null;
-        BufferedWriter w = null;
-        String file = path+System.currentTimeMillis()+".tri";
-        
-        if( ps.getTriangles() == null || ps.getTriangles().isEmpty() ) 
-        {
-            return;
-        }
-        
-        try
-        {
-            
-            writer = new FileWriter(file);
-            w = new BufferedWriter(writer);
-            for( DelaunayTriangle t : ps.getTriangles() )
-            {
-                for( int i=0; i<3; i++ )
-                {
-                    w.write( Float.toString( t.points[i].getXf() ) +","+ Float.toString( t.points[i].getYf() )+" ");                    
-                }
-//                w.newLine();
-            }
-            logger.info( "Saved triangle lines\n" + file );
-        }
-        catch( IOException e )
-        {
-            logger.error( "Failed to save triangle lines" + e.getMessage() );
-        }
-        finally
-        {
-            if( w != null )
-            {
-                try
-                {
-                    w.close();
-                }
-                catch( IOException e2 )
-                {                    
-                }
-            }
-        }
-    }
+//    public static void saveTriLine( String path, PolygonSet ps )
+//    {
+//        FileWriter writer = null;
+//        BufferedWriter w = null;
+//        String file = path+System.currentTimeMillis()+".tri";
+//        
+//        if( ps.getTriangles() == null || ps.getTriangles().isEmpty() ) 
+//        {
+//            return;
+//        }
+//        
+//        try
+//        {
+//            
+//            writer = new FileWriter(file);
+//            w = new BufferedWriter(writer);
+//            for( DelaunayTriangle t : ps.getTriangles() )
+//            {
+//                for( int i=0; i<3; i++ )
+//                {
+//                    w.write( Float.toString( t.points[i].getXf() ) +","+ Float.toString( t.points[i].getYf() )+" ");                    
+//                }
+////                w.newLine();
+//            }
+//            logger.info( "Saved triangle lines\n" + file );
+//        }
+//        catch( IOException e )
+//        {
+//            logger.error( "Failed to save triangle lines" + e.getMessage() );
+//        }
+//        finally
+//        {
+//            if( w != null )
+//            {
+//                try
+//                {
+//                    w.close();
+//                }
+//                catch( IOException e2 )
+//                {                    
+//                }
+//            }
+//        }
+//    }
 
 }

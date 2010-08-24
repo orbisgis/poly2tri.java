@@ -1,4 +1,4 @@
-package org.poly2tri.polygon;
+package org.poly2tri.geometry.polygon;
 
 import org.poly2tri.triangulation.point.TPoint;
 

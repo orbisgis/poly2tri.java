@@ -30,8 +30,8 @@
  */
 package org.poly2tri.triangulation.util;
 
-import org.poly2tri.polygon.Polygon;
-import org.poly2tri.polygon.PolygonPoint;
+import org.poly2tri.geometry.polygon.Polygon;
+import org.poly2tri.geometry.polygon.PolygonPoint;
 
 public class PolygonGenerator
 {

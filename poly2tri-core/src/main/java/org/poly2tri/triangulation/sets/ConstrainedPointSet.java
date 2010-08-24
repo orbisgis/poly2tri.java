@@ -73,9 +73,9 @@ public class ConstrainedPointSet extends PointSet
 
     @SuppressWarnings("unchecked")
     @Override
-    public void prepare( TriangulationContext tcx )
+    public void prepareTriangulation( TriangulationContext tcx )
     {
-        super.prepare( tcx );
+        super.prepareTriangulation( tcx );
         for( int i = 0; i < _index.length; i+=2 )
         {
             // XXX: must change!!

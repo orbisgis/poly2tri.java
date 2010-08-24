@@ -2,7 +2,7 @@ package org.poly2tri.polygon.ardor3d;
 
 import java.util.ArrayList;
 
-import org.poly2tri.polygon.Polygon;
+import org.poly2tri.geometry.polygon.Polygon;
 import org.poly2tri.triangulation.point.ardor3d.ArdorVector3Point;
 import org.poly2tri.triangulation.point.ardor3d.ArdorVector3PolygonPoint;
 

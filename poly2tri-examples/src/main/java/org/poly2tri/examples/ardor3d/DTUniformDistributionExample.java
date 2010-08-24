@@ -1,11 +1,16 @@
 package org.poly2tri.examples.ardor3d;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.poly2tri.Poly2Tri;
 import org.poly2tri.examples.ardor3d.base.P2TSimpleExampleBase;
 import org.poly2tri.examples.ardor3d.misc.DataLoader;
 import org.poly2tri.examples.ardor3d.misc.ExampleSets;
+import org.poly2tri.triangulation.TriangulationAlgorithm;
+import org.poly2tri.triangulation.TriangulationContext;
+import org.poly2tri.triangulation.TriangulationPoint;
+import org.poly2tri.triangulation.point.TPoint;
 import org.poly2tri.triangulation.sets.PointSet;
 import org.poly2tri.triangulation.tools.ardor3d.ArdorMeshMapper;
 import org.poly2tri.triangulation.util.PointGenerator;
@@ -47,7 +52,6 @@ public class DTUniformDistributionExample extends P2TSimpleExampleBase
         try
         {
             ps = DataLoader.loadPointSet( ExampleSets.Example2, 0.1 );
-
             ps = new PointSet( PointGenerator.uniformDistribution( 10000, 60 ) );
             Poly2Tri.triangulate( ps );
             ArdorMeshMapper.updateTriangleMesh( mesh, ps );

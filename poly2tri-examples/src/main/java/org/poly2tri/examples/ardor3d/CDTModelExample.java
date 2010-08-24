@@ -36,11 +36,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.poly2tri.examples.ardor3d.base.P2TExampleBase;
-import org.poly2tri.examples.ardor3d.misc.ExampleModels;
 import org.poly2tri.examples.ardor3d.misc.DataLoader;
+import org.poly2tri.examples.ardor3d.misc.ExampleModels;
 import org.poly2tri.examples.ardor3d.misc.Triangle;
-import org.poly2tri.polygon.Polygon;
-import org.poly2tri.polygon.PolygonSet;
+import org.poly2tri.geometry.polygon.Polygon;
+import org.poly2tri.geometry.polygon.PolygonSet;
 import org.poly2tri.triangulation.TriangulationPoint;
 import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
 import org.poly2tri.triangulation.delaunay.sweep.AdvancingFront;
@@ -49,6 +49,7 @@ import org.poly2tri.triangulation.delaunay.sweep.DTSweepConstraint;
 import org.poly2tri.triangulation.delaunay.sweep.DTSweepContext;
 import org.poly2tri.triangulation.point.TPoint;
 import org.poly2tri.triangulation.sets.ConstrainedPointSet;
+import org.poly2tri.triangulation.sets.PointSet;
 import org.poly2tri.triangulation.util.PolygonGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -135,7 +136,7 @@ public class CDTModelExample extends P2TExampleBase
                     }
                 }
             }
-        }
+        }        
     }
 
     @Override
@@ -162,7 +163,7 @@ public class CDTModelExample extends P2TExampleBase
 //          m_circumCircle = new GUICircumCircle();
 //          m_node.attachChild( m_circumCircle.getSceneNode() );
         }
-                
+                        
         buildModel(m_currentModel); 
         triangulate();
     }
@@ -370,18 +371,8 @@ public class CDTModelExample extends P2TExampleBase
             if( front == null ) return;
             FloatBuffer fb = m_frontLine.getMeshData().getVertexBuffer();
             FloatBuffer nodeVert = m_nodeLines.getMeshData().getVertexBuffer();
-//            if( fb.capacity() < front.nodeCount*3 )
-//            {
-//                // Make it twice the size so we got something to grow with
-//                fb = BufferUtils.createFloatBuffer( 2*front.nodeCount*3 );
-//                m_frontLine.getMeshData().setVertexBuffer(fb);
-//            }
-//            else
-//            {
-//                fb.limit( front.nodeCount*3 );
-//            }
-            fb.limit( 800*3 );
-            nodeVert.limit( 2*800*3 );
+            fb.limit( fb.capacity() );
+            nodeVert.limit( fb.capacity() );
             fb.rewind();
             nodeVert.rewind(); 
             

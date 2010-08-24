@@ -148,11 +148,30 @@ public class DTSweep
         turnAdvancingFrontConvex( tcx, n2, n3 );
         
         // TODO: implement ConvexHull for lower right and left boundary
+        
+        // Lets remove triangles connected to the "seed" points
+
+        // XXX: When the first three nodes are points in a triangle we need to do a flip before 
+        //      removing triangles or we will lose a valid triangle.
+        //      Same for last three nodes!
+        n1 = tcx.aFront.tail.prev;
+        if( n1.triangle.contains( n1.next.point ) && n1.triangle.contains( n1.prev.point ) )
+        {
+            t1 = n1.triangle.neighborAcross( n1.point );
+            rotateTrianglePair( n1.triangle, n1.point, t1, t1.oppositePoint( n1.triangle, n1.point ) );
+        }                
+        n1 = tcx.aFront.head.next;
+        if( n1.triangle.contains( n1.prev.point ) && n1.triangle.contains( n1.next.point ) )
+        {
+            t1 = n1.triangle.neighborAcross( n1.point );
+            rotateTrianglePair( n1.triangle, n1.point, t1, t1.oppositePoint( n1.triangle, n1.point ) );
+        }                
+        
         // Lower right boundary 
         first = tcx.aFront.head.point;
-        n2 = tcx.aFront.tail.prev;
-        t1 = n2.triangle;
-        p1 = n2.point;
+        n1 = tcx.aFront.tail.prev;
+        t1 = n1.triangle;
+        p1 = n1.point;        
         do
         {
             tcx.removeFromList( t1 );
@@ -550,23 +569,42 @@ public class DTSweep
         Orientation o1 = orient2d( eq, p1, ep );
         if( o1 == Orientation.Collinear )
         {
-            // TODO: Split edge in two
-////            splitEdge( ep, eq, p1 );
-//            edgeEvent( tcx, p1, eq, triangle, point );
-//            edgeEvent( tcx, ep, p1, triangle, p1 );
-//            return;
-            throw new PointOnEdgeException( "EdgeEvent - Point on constrained edge not supported yet" );                
+            if( triangle.contains( eq, p1 ) )
+            {
+                triangle.markConstrainedEdge( eq, p1 );
+                // We are modifying the constraint maybe it would be better to 
+                // not change the given constraint and just keep a variable for the new constraint
+                tcx.edgeEvent.constrainedEdge.q = p1;
+                triangle = triangle.neighborAcross( point );
+                edgeEvent( tcx, ep, p1, triangle, p1 );
+            }
+            else
+            {
+                throw new PointOnEdgeException( "EdgeEvent - Point on constrained edge not supported yet" );                
+            }            
+            if( tcx.isDebugEnabled() ) { logger.info( "EdgeEvent - Point on constrained edge" ); }
+            return;
         }
 
         p2 = triangle.pointCW( point );
         Orientation o2 = orient2d( eq, p2, ep );
         if( o2 == Orientation.Collinear )
         {
-            // TODO: Split edge in two
-//            edgeEvent( tcx, p2, eq, triangle, point );
-//            edgeEvent( tcx, ep, p2, triangle, p2 );
-//            return;
-            throw new PointOnEdgeException( "EdgeEvent - Point on constrained edge not supported yet" );                
+            if( triangle.contains( eq, p2 ) )
+            {
+                triangle.markConstrainedEdge( eq, p2 );
+                // We are modifying the constraint maybe it would be better to 
+                // not change the given constraint and just keep a variable for the new constraint
+                tcx.edgeEvent.constrainedEdge.q = p2;
+                triangle = triangle.neighborAcross( point );
+                edgeEvent( tcx, ep, p2, triangle, p2 );
+            }
+            else
+            {
+                throw new PointOnEdgeException( "EdgeEvent - Point on constrained edge not supported yet" );                
+            }            
+            if( tcx.isDebugEnabled() ) { logger.info( "EdgeEvent - Point on constrained edge" ); }
+            return;
         }
 
         if( o1 == o2 )

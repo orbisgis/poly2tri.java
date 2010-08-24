@@ -28,7 +28,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.poly2tri.polygon;
+package org.poly2tri.geometry.polygon;
 
 import java.util.ArrayList;
 import java.util.List;

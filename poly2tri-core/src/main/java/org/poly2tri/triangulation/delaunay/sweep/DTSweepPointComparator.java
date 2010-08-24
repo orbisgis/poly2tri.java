@@ -6,7 +6,6 @@ import org.poly2tri.triangulation.TriangulationPoint;
 
 public class DTSweepPointComparator implements Comparator<TriangulationPoint>
 {
-    @Override
     public int compare( TriangulationPoint p1, TriangulationPoint p2 )
     {
       if(p1.getY() < p2.getY() )

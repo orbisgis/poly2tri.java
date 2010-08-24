@@ -50,7 +50,6 @@ public class PointSet implements Triangulatable
         _points.addAll( points );
     }
     
-    @Override
     public TriangulationMode getTriangulationMode()
     {
         return TriangulationMode.UNCONSTRAINED;
@@ -81,8 +80,7 @@ public class PointSet implements Triangulatable
         _triangles.clear();            
     }
 
-    @Override
-    public void prepare( TriangulationContext<?> tcx )
+    public void prepareTriangulation( TriangulationContext<?> tcx )
     {
         if( _triangles == null )
         {

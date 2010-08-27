@@ -70,20 +70,6 @@ public class DTSweep
         tcx.createAdvancingFront();
         
         sweep( tcx );
-
-        // TODO: remove temporary
-        // Check if the sweep algorithm is legalize robust
-        // By doing a legalize on all triangles and see if anything happens
-        // we know if the sweep algorithm missed some legalizations
-//        System.out.println("============================");
-//        for( DelaunayTriangle t : tcx.getTriangles() )
-//        {
-//            if( legalize( tcx, t ) )
-//            {
-//                tcx.getDebugContext().setPrimaryTriangle( t );
-//                System.out.println("[FIX] Triangle needed legalization after sweep");
-//            }
-//        }
                 
         // Finalize triangulation
         if( tcx.getTriangulationMode() ==  TriangulationMode.POLYGON )
@@ -626,34 +612,6 @@ public class DTSweep
             // This triangle crosses constraint so lets flippin start!
             flipEdgeEvent( tcx, ep, eq, triangle, point );
         }        
-    }
-
-    /**
-     * In the case of a pointset with some constraint edges. If a triangle side is collinear
-     * with a part of the constraint we split the constraint into two constraints. This could
-     * happen when the given constraint migth intersect a point in the set.<br>
-     * This can never happen in the case when we are working with a polygon.
-     * <p>
-     * Think of two triangles that have non shared sides that are collinear and the constraint
-     * is set from a point in triangle A to a point in triangle B so that the constraint is
-     * the union of both those sides. We then have to split the constraint into two so we get
-     * one constraint for each triangle.  
-     * @param ep
-     * @param eq
-     * @param p point on the edge between eq->ep
-     */
-    private static void splitEdge( TriangulationPoint ep, 
-                                   TriangulationPoint eq, 
-                                   TriangulationPoint p )
-    {
-        DTSweepConstraint edge = eq.getEdge( ep );
-        edge.p = p;
-        new DTSweepConstraint(ep, p);
-
-//        // Redo this edge now that we have split the constraint
-//          newEdgeEvent( tcx, edge, triangle, point );
-//          // Continue with new edge
-//          newEdgeEvent( tcx, edge, triangle, p2 );
     }
 
     private static void flipEdgeEvent( DTSweepContext tcx, 

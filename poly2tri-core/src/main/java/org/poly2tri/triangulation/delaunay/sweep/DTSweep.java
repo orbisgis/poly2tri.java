@@ -140,6 +140,8 @@ public class DTSweep
         // XXX: When the first three nodes are points in a triangle we need to do a flip before 
         //      removing triangles or we will lose a valid triangle.
         //      Same for last three nodes!
+        // !!! If I implement ConvexHull for lower right and left boundary this fix should not be 
+        //     needed and the removed triangles will be added again by default
         n1 = tcx.aFront.tail.prev;
         if( n1.triangle.contains( n1.next.point ) && n1.triangle.contains( n1.prev.point ) )
         {
@@ -170,12 +172,12 @@ public class DTSweep
         first = tcx.aFront.head.next.point;
         p1 = t1.pointCW( tcx.aFront.head.point );
         t1 = t1.neighborCW( tcx.aFront.head.point );
-        do
+        while( p1 != first )
         {
             tcx.removeFromList( t1 );
             p1 = t1.pointCCW( p1 );
             t1 = t1.neighborCCW( p1 );
-        } while( p1 != first );    
+        }    
         
         tcx.finalizeTriangulation();
     }

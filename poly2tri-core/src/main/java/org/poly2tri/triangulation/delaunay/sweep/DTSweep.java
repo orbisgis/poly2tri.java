@@ -122,22 +122,21 @@ public class DTSweep
      */
     private static void finalizationConvexHull( DTSweepContext tcx )
     {
-        AdvancingFrontNode n1, n2, n3;
+        AdvancingFrontNode n1, n2;
         DelaunayTriangle t1, t2;
-        TriangulationPoint first, p1, p2;
+        TriangulationPoint first, p1;
 
         n1 = tcx.aFront.head.next;
         n2 = n1.next;
-        n3 = n2.next;
         first = n1.point;
 
-        turnAdvancingFrontConvex( tcx, n2, n3 );
+        turnAdvancingFrontConvex( tcx, n1, n2 );
         
         // TODO: implement ConvexHull for lower right and left boundary
         
-        // Lets remove triangles connected to the "seed" points
+        // Lets remove triangles connected to the two "algorithm" points
 
-        // XXX: When the first three nodes are points in a triangle we need to do a flip before 
+        // XXX: When the first the nodes are points in a triangle we need to do a flip before 
         //      removing triangles or we will lose a valid triangle.
         //      Same for last three nodes!
         // !!! If I implement ConvexHull for lower right and left boundary this fix should not be 
@@ -147,37 +146,55 @@ public class DTSweep
         {
             t1 = n1.triangle.neighborAcross( n1.point );
             rotateTrianglePair( n1.triangle, n1.point, t1, t1.oppositePoint( n1.triangle, n1.point ) );
+            tcx.mapTriangleToNodes( n1.triangle );
+            tcx.mapTriangleToNodes( t1 );
         }                
         n1 = tcx.aFront.head.next;
         if( n1.triangle.contains( n1.prev.point ) && n1.triangle.contains( n1.next.point ) )
         {
             t1 = n1.triangle.neighborAcross( n1.point );
             rotateTrianglePair( n1.triangle, n1.point, t1, t1.oppositePoint( n1.triangle, n1.point ) );
+            tcx.mapTriangleToNodes( n1.triangle );
+            tcx.mapTriangleToNodes( t1 );
         }                
-        
+
         // Lower right boundary 
         first = tcx.aFront.head.point;
-        n1 = tcx.aFront.tail.prev;
-        t1 = n1.triangle;
-        p1 = n1.point;        
+        n2 = tcx.aFront.tail.prev;
+        t1 = n2.triangle;
+        p1 = n2.point;
+        n2.triangle = null;
         do
         {
             tcx.removeFromList( t1 );
             p1 = t1.pointCCW( p1 );
             if( p1 == first ) break;
-            t1 = t1.neighborCCW( p1 );
+            t2 = t1.neighborCCW( p1 );
+            t1.clear();
+            t1 = t2;
         } while( true );
-
+        
         // Lower left boundary
         first = tcx.aFront.head.next.point;
         p1 = t1.pointCW( tcx.aFront.head.point );
-        t1 = t1.neighborCW( tcx.aFront.head.point );
+        t2 = t1.neighborCW( tcx.aFront.head.point );
+        t1.clear();
+        t1 = t2;
         while( p1 != first )
         {
             tcx.removeFromList( t1 );
             p1 = t1.pointCCW( p1 );
-            t1 = t1.neighborCCW( p1 );
+            t2 = t1.neighborCCW( p1 );
+            t1.clear();
+            t1 = t2;
         }    
+        
+        // Remove current head and tail node now that we have removed all triangles attached
+        // to them. Then set new head and tail node points
+        tcx.aFront.head = tcx.aFront.head.next;
+        tcx.aFront.head.prev = null;
+        tcx.aFront.tail = tcx.aFront.tail.prev;
+        tcx.aFront.tail.next = null;
         
         tcx.finalizeTriangulation();
     }

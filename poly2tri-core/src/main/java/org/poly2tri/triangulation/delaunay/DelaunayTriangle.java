@@ -185,6 +185,23 @@ public class DelaunayTriangle
     }
 
     /**
+     * Clears all references to all other triangles and points
+     */
+    public void clear()
+    {
+        DelaunayTriangle t;
+        for( int i=0; i<3; i++ )
+        {
+            t = neighbors[i];
+            if( t != null )
+            {
+                t.clearNeighbor( this );
+            }
+        }
+        clearNeighbors();
+        points[0]=points[1]=points[2]=null;
+    }
+    /**
      * @param t - opposite triangle 
      * @param p - the point in t that isn't shared between the triangles
      * @return

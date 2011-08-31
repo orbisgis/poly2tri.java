@@ -42,8 +42,8 @@ public class DataLoader
         while( ( line = reader.readLine() ) != null )
         {
             StringTokenizer tokens = new StringTokenizer( line, " ," );
-            points.add( new Vector3( Float.valueOf( tokens.nextToken() ).floatValue(), 
-                                     Float.valueOf( tokens.nextToken() ).floatValue(),
+            points.add( new Vector3( Double.valueOf( tokens.nextToken() ).doubleValue(), 
+                                     Double.valueOf( tokens.nextToken() ).doubleValue(),
                                      0f ));
         }
         if( points.isEmpty() )

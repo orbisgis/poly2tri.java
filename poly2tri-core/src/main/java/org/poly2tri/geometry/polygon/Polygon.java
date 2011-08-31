@@ -39,6 +39,9 @@ public class Polygon implements Triangulatable
         p1._previous = p3;
         p2._previous = p1;
         p3._previous = p2;
+        _points.add( p1 );
+        _points.add( p2 );
+        _points.add( p3 );
     }
 
     /**

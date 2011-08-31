@@ -212,39 +212,6 @@ public class DelaunayTriangle
         return pointCW( t.pointCW(p) );
     }
 
-    // Fast point in triangle test
-//    public boolean pointIn( TPoint point )
-//    {
-//        double ijx = points[1].getX() - points[0].getX();
-//        double ijy = points[1].getY() - points[0].getY();
-//        double abx = point.getX() - points[0].getX();
-//        double aby = point.getY() - points[0].getY();
-//        double pab = abx*ijy - aby*ijx;
-//
-//        double jkx = points[2].getX() - points[1].getX();
-//        double jky = points[2].getY() - points[1].getY();
-//        double bcx = point.getX() - points[1].getX();
-//        double bcy = point.getY() - points[1].getY();
-//        double pbc = bcx*jky - bcy*jkx;
-//        boolean sameSign = Math.signum( pab ) == Math.signum( pbc );
-//        if( !sameSign )
-//        {
-//            return false;
-//        }
-//
-//        double kix = points[0].getX() - points[2].getX();
-//        double kiy = points[0].getY() - points[2].getY();
-//        double cax = point.getX() - points[2].getX();
-//        double cay = point.getY() - points[2].getY();
-//        double pca = cax*kiy - cay*kix;
-//        sameSign = Math.signum( pab ) == Math.signum( pca );
-//        if( !sameSign )
-//        {
-//            return false;
-//        }
-//        return true;
-//    }
-
     // The neighbor clockwise to given point
     public DelaunayTriangle neighborCW( TriangulationPoint point )
     {
@@ -476,57 +443,18 @@ public class DelaunayTriangle
 
     public double area()
     {
+        double a = (points[0].getX() - points[2].getX())*(points[1].getY() - points[0].getY());
+        double b = (points[0].getX() - points[1].getX())*(points[2].getY() - points[0].getY());
 
-        double b = points[0].getX() - points[1].getX();
-        double h = points[2].getY() - points[1].getY();
-
-        return Math.abs( ( b * h * 0.5f ) );
+        return 0.5*Math.abs( a - b );
     }
 
     public TPoint centroid()
     {
-        double cx = ( points[0].getX() + points[1].getX() + points[2].getX() ) / 3f;
-        double cy = ( points[0].getY() + points[1].getY() + points[2].getY() ) / 3f;
+        double cx = ( points[0].getX() + points[1].getX() + points[2].getX() ) / 3d;
+        double cy = ( points[0].getY() + points[1].getY() + points[2].getY() ) / 3d;
         return new TPoint( cx, cy );
     }
-
-//    public boolean thin()
-//    {
-//        TPoint a1 = (TPoint)points[1].subtract( points[0], null );
-//        TPoint b1 = (TPoint)points[2].subtract( points[0], null );
-//        TPoint a2 = (TPoint)points[0].subtract( points[1], null );
-//        TPoint b2 = (TPoint)points[2].subtract( points[1], null );
-//        double angle1 = Math.abs( Math.atan2( a1.cross( b1 ), a1.dot( b1 ) ) );
-//        double angle2 = Math.abs( Math.atan2( a2.cross( b2 ), a2.dot( b2 ) ) );
-//        double angle3 = Math.PI - angle1 - angle2;
-//        logger.info( "tri angles[{},{},{}]", new Object[]{ Math.toDegrees( angle1 ),  Math.toDegrees( angle2 ),  Math.toDegrees( angle3 ) } );
-//        // 30 degrees
-//        double minAngle = Math.PI / 6;
-//        return ( angle1 <= minAngle || angle2 <= minAngle || angle3 <= minAngle );
-//    }
-
-    // Compute barycentric coordinates (u, v, w) for
-    // point p with respect to triangle
-    // From "Real-Time Collision Detection" by Christer Ericson
-//    public double[] barycentric( TPoint p )
-//    {
-//        double v0x = points[1].getX() - points[0].getX();
-//        double v0y = points[1].getY() - points[0].getY();
-//        double v1x = points[2].getX() - points[0].getX();
-//        double v1y = points[2].getY() - points[0].getY();
-//        double v2x = p.getX() - points[0].getX();
-//        double v2y = p.getY() - points[0].getY();
-//        double d00 = v0x*v0x + v0y*v0y;
-//        double d01 = v0x*v1x + v0y*v1y;
-//        double d11 = v1x*v1x + v1y*v1y;
-//        double d20 = v2x*v0x + v2y*v0y;
-//        double d21 = v2x*v1x + v2y*v1y;
-//        double denom = d00 * d11 - d01 * d01;
-//        double v = ( d11 * d20 - d01 * d21 ) / denom;
-//        double w = ( d00 * d21 - d01 * d20 ) / denom;
-//        double u = 1.0f - v - w;
-//        return new double[] { u, v, w };
-//    }
 
     /**
      * Get the neighbor that share this edge

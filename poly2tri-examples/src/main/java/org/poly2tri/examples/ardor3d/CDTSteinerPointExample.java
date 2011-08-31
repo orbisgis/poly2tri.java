@@ -1,5 +1,7 @@
 package org.poly2tri.examples.ardor3d;
 
+import java.util.ArrayList;
+
 import org.poly2tri.Poly2Tri;
 import org.poly2tri.examples.ardor3d.base.P2TSimpleExampleBase;
 import org.poly2tri.geometry.polygon.Polygon;
@@ -81,7 +83,6 @@ public class CDTSteinerPointExample extends P2TSimpleExampleBase
         poly.addSteinerPoint( new TPoint(0,0) );
         Poly2Tri.triangulate( poly );
         ArdorMeshMapper.updateTriangleMesh( mesh, poly );
-
     }
 
     private Polygon createCirclePolygon( int n, double radius )

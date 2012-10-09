@@ -30,6 +30,7 @@
  */
 package org.poly2tri.triangulation.delaunay.sweep;
 
+import java.util.ArrayDeque;
 import java.util.Collections;
 
 import org.poly2tri.triangulation.Triangulatable;
@@ -97,27 +98,35 @@ public class DTSweepContext extends TriangulationContext<DTSweepDebugContext>
 //        triangle.clearNeighbors();
     }
 
-    public void meshClean( DelaunayTriangle triangle )
+    protected void meshClean(DelaunayTriangle triangle)
     {
-        meshCleanReq( triangle );
-    }
-
-    private void meshCleanReq( DelaunayTriangle triangle )
-    {
-        if( triangle != null && !triangle.isInterior() )
-        {
-            triangle.isInterior( true );
-            _triUnit.addTriangle( triangle );
-            for( int i = 0; i < 3; i++ )
-            {
-                if( !triangle.cEdge[i] )
-                {
-                    meshCleanReq( triangle.neighbors[i] );
-                }
-            }
+    	DelaunayTriangle t1,t2;
+        if( triangle != null )
+        {	
+	        ArrayDeque<DelaunayTriangle> deque = new ArrayDeque<DelaunayTriangle>();
+	        deque.addFirst(triangle);
+	        triangle.isInterior(true);
+	
+	        while( !deque.isEmpty() )
+	        {
+	            t1 = deque.removeFirst();
+	            _triUnit.addTriangle( t1 );
+	            for( int i=0; i<3; ++i )
+	            {
+	                if( !t1.cEdge[i] ) 
+	                {
+	                    t2 = t1.neighbors[i];
+	                    if( t2 != null && !t2.isInterior() ) 
+	                    {
+	                        t2.isInterior(true);
+	                        deque.addLast(t2);
+	                    }
+	                }
+	            }
+	        }
         }
     }
-
+    
     public void clear()
     {
         super.clear();

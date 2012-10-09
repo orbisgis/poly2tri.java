@@ -64,14 +64,13 @@ public class DTSweep
     public DTSweep()
     {}
 
-    // Triangulate simple polygon with holes
+    /** Triangulate simple polygon with holes **/
     public static void triangulate( DTSweepContext tcx ) 
     {
         tcx.createAdvancingFront();
         
         sweep( tcx );
-                
-        // Finalize triangulation
+
         if( tcx.getTriangulationMode() ==  TriangulationMode.POLYGON )
         {
             finalizationPolygon( tcx );
@@ -852,10 +851,9 @@ public class DTSweep
         
         // Fill right holes
         node = n.next;
-        while( node.next != null )
+        while( node.hasNext() )
         {
-            angle = holeAngle( node );
-            if( angle > PI_div2 || angle < -PI_div2 )
+            if( isLargeHole(node) )
             {
                 break;
             }
@@ -865,10 +863,9 @@ public class DTSweep
 
         // Fill left holes
         node = n.prev;
-        while( node.prev != null )
+        while( node.hasPrevious() )
         {
-            angle = holeAngle( node );
-            if( angle > PI_div2 || angle < -PI_div2 )
+            if( isLargeHole(node) )
             {
                 break;
             }
@@ -888,6 +885,79 @@ public class DTSweep
     }
 
     /**
+     * @param node
+     * @return true if hole angle exceeds 90 degrees
+     */
+    private static boolean isLargeHole(AdvancingFrontNode node)
+    {
+        double angle = angle(node.point, node.next.point, node.prev.point);
+        //XXX: don't see angle being in range [-pi/2,0] due to how advancing front works
+//        return (angle > PI_div2) || (angle < -PI_div2); 
+        return (angle > PI_div2) || (angle < 0); 
+    	
+        // ISSUE 48: http://code.google.com/p/poly2tri/issues/detail?id=48
+        // TODO: Adding this fix suggested in issues 48 caused some 
+        //       triangulations to fail so commented it out for now.
+        //
+        // Also haven't been able to produce a triangulation that gives the
+        // problem described in issue 48.
+        
+//        AdvancingFrontNode nextNode = node.next;
+//        AdvancingFrontNode prevNode = node.prev;
+//        if( !AngleExceeds90Degrees(node.point, 
+//                                   nextNode.point, 
+//                                   prevNode.point))
+//        {
+//            return false;
+//        }
+//
+//        // Check additional points on front.
+//        AdvancingFrontNode next2Node = nextNode.next;
+//        // "..Plus.." because only want angles on same side as point being added.
+//        if(    (next2Node != null) 
+//            && !AngleExceedsPlus90DegreesOrIsNegative(node.point, 
+//                                                      next2Node.point, 
+//                                                      prevNode.point))
+//        {
+//            return false;
+//        }
+//
+//        AdvancingFrontNode prev2Node = prevNode.prev;
+//        // "..Plus.." because only want angles on same side as point being added.
+//        if(    (prev2Node != null) 
+//            && !AngleExceedsPlus90DegreesOrIsNegative(node.point, 
+//                                                      nextNode.point, 
+//                                                      prev2Node.point))
+//        {
+//            return false;
+//        }
+//        return true;
+    }
+    
+//    private static boolean AngleExceeds90Degrees
+//    (
+//        TriangulationPoint origin, 
+//        TriangulationPoint pa, 
+//        TriangulationPoint pb
+//    )
+//    {
+//        double angle = angle(origin, pa, pb);
+//        return (angle > PI_div2) || (angle < -PI_div2);
+//    }
+//
+//
+//    private static boolean AngleExceedsPlus90DegreesOrIsNegative
+//    (
+//        TriangulationPoint origin, 
+//        TriangulationPoint pa, 
+//        TriangulationPoint pb
+//    )
+//    {
+//        double angle = angle(origin, pa, pb);
+//        return (angle > PI_div2) || (angle < 0);
+//    }
+    
+    /**
      * Fills a basin that has formed on the Advancing Front to the right
      * of given node.<br>
      * First we decide a left,bottom and right node that forms the 
@@ -900,7 +970,6 @@ public class DTSweep
     {
         if( orient2d( node.point, node.next.point, node.next.next.point ) == Orientation.CCW )
         {
-//            tcx.basin.leftNode = node.next.next;
             tcx.basin.leftNode = node;
         }
         else
@@ -1014,9 +1083,11 @@ public class DTSweep
     /**
      * 
      * @param node - middle node
-     * @return the angle between 3 front nodes
+     * @return the angle between p-a and p-b in range [-pi,pi]
      */
-    private static double holeAngle( AdvancingFrontNode node )
+    private static double angle( TriangulationPoint p, 
+    		                     TriangulationPoint a, 
+    		                     TriangulationPoint b )
     {
         // XXX: do we really need a signed angle for holeAngle?
         //      could possible save some cycles here
@@ -1028,12 +1099,12 @@ public class DTSweep
          * Where x = ax*bx + ay*by
          *       y = ax*by - ay*bx
          */
-        final double px = node.point.getX();
-        final double py = node.point.getY();
-        final double ax = node.next.point.getX() - px;
-        final double ay = node.next.point.getY() - py;
-        final double bx = node.prev.point.getX() - px;
-        final double by = node.prev.point.getY() - py;
+        final double px = p.getX();
+        final double py = p.getY();
+        final double ax = a.getX() - px;
+        final double ay = a.getY() - py;
+        final double bx = b.getX() - px;
+        final double by = b.getY() - py;
         return Math.atan2( ax*by - ay*bx, ax*bx + ay*by );
     }
 

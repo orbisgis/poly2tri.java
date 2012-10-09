@@ -36,65 +36,47 @@ public class CDTSteinerPointExample extends P2TSimpleExampleBase
     protected void initExample()
     {
         super.initExample();
-        
+
+        Mesh mesh;
         Node node = new Node();
         node.setRenderState( new WireframeState() );
         _node.attachChild( node );
         Polygon poly;
         
-        poly = createCirclePolygon( 32, 1.5 );
-
-        // top left
-        Mesh mesh = new Mesh();
-        mesh.setDefaultColor( ColorRGBA.BLUE );
-        mesh.setTranslation( -2, 2, 0 );
-        node.attachChild( mesh );
-  
-        Poly2Tri.triangulate( poly );
-        ArdorMeshMapper.updateTriangleMesh( mesh, poly );
-
-        // bottom left
+        poly = createSquare();
         mesh = new Mesh();
-        mesh.setDefaultColor( ColorRGBA.RED );
-        mesh.setTranslation( -2, -2, 0 );
+        mesh.setDefaultColor( ColorRGBA.GREEN );
+        mesh.setTranslation( 0, 0, 0 );
         node.attachChild( mesh );
 
-        poly.addSteinerPoint( new TPoint(0,0) );
-        Poly2Tri.triangulate( poly );
-        ArdorMeshMapper.updateTriangleMesh( mesh, poly );
-
-        poly = PolygonGenerator.RandomCircleSweep2( 4, 200 );
-
-        // top right
-        mesh = new Mesh();
-        mesh.setDefaultColor( ColorRGBA.BLUE );
-        mesh.setTranslation( 2, 2, 0 );
-        node.attachChild( mesh );
-
-        Poly2Tri.triangulate( poly );
-        ArdorMeshMapper.updateTriangleMesh( mesh, poly );
-
-        // bottom right
-        mesh = new Mesh();
-        mesh.setDefaultColor( ColorRGBA.RED );
-        mesh.setTranslation( 2, -2, 0 );
-        node.attachChild( mesh );
-
-        poly.addSteinerPoint( new TPoint(0,0) );
         Poly2Tri.triangulate( poly );
         ArdorMeshMapper.updateTriangleMesh( mesh, poly );
     }
 
-    private Polygon createCirclePolygon( int n, double radius )
+    private Polygon createSquare()
     {
-        if( n < 3 ) n=3;
-        
+    	int r = 25, n = 500, m = 50;
+    	
         PolygonPoint[] points = new PolygonPoint[n];
         for( int i=0; i<n; i++ )
         {
-            points[i] = new PolygonPoint( radius*Math.cos( (2.0*Math.PI*i)/n ),
-                                          radius*Math.sin( (2.0*Math.PI*i)/n ) );            
+            points[i] = new PolygonPoint( r*Math.cos( (2.0*Math.PI*i)/n ),
+                                          r*Math.sin( (2.0*Math.PI*i)/n ) );            
         }
-        return new Polygon( points );
+
+        Polygon p = new Polygon(points);
+        double w,dx,dy;
+//        w = 2*r*Math.cos(0.25*Math.PI);
+        w = 2*r;
+        dx = w/(m+1);
+        dy = w/(m+1);
+        for( int j=0; j<m; ++j )
+        {
+            for( int i=0; i<m; ++i )
+            {
+            	p.addSteinerPoint( new TPoint( dx*(i+1) - 0.5*w, dy*(j+1) - 0.5*w ) );
+            }
+        }
+        return p;
     }
 }

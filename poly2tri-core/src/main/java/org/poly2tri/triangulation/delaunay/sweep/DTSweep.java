@@ -652,6 +652,11 @@ public class DTSweep
             throw new RuntimeException( "[BUG:FIXME] FLIP failed due to missing triangle");
         }
 
+        if( t.getConstrainedEdgeAcross(p) )
+        {
+            throw new RuntimeException( "Intersecting Constraints" );
+        }
+
         if( tcx.isDebugEnabled() ) 
         { 
             tcx.getDebugContext().setPrimaryTriangle( t ); 

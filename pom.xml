@@ -30,15 +30,7 @@
   	<module>poly2tri-ardor3d</module>
   	<module>poly2tri-examples</module>
   	<module>poly2tri-examples-geotools</module>
-  </modules>
-  <repositories>
-  	<repository>
-  		<id>Ardor3D-releases</id>
-  		<name>Ardor3D-releases</name>
-  		<url>http://ardor3d.com:8081/nexus/content/repositories/releases</url>
-  	</repository>
-  </repositories>
-  
+  </modules>  
   
   <dependencies>
   </dependencies>

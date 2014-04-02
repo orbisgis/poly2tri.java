@@ -1,17 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <artifactId>poly2tri-ardor3d</artifactId>
-  
-  
-  <repositories>
-  	<repository>
-  		<id>Ardor3D-releases</id>
-  		<name>Ardor3D-releases</name>
-  		<url>http://ardor3d.com:8081/nexus/content/repositories/releases</url>
-  	</repository>
-  </repositories>
-  
-  
+    
   <dependencies>
     <dependency>
       <groupId>org.poly2tri</groupId>
@@ -21,7 +11,7 @@
     <dependency>
     	<groupId>com.ardor3d</groupId>
     	<artifactId>ardor3d-core</artifactId>
-    	<version>0.6</version>
+    	<version>0.9</version>
     </dependency>
   </dependencies>
   <name>Poly2Tri Ardor3D</name>

@@ -3,15 +3,12 @@ package org.poly2tri;
 import org.junit.Test;
 import org.poly2tri.geometry.polygon.Polygon;
 import org.poly2tri.geometry.polygon.PolygonPoint;
-import org.poly2tri.triangulation.TriangulationPoint;
-import org.poly2tri.triangulation.point.TPoint;
 
 import java.io.*;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 

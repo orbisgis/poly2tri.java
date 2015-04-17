@@ -38,10 +38,10 @@ public class TestConstrainedDelaunay {
                 String line;
                 while ((line = bufferedReader.readLine()) != null) {
                     StringTokenizer stringTokenizer = new StringTokenizer(line, " ");
-                    double x = new BigDecimal(Double.valueOf(stringTokenizer.nextToken())).round(mathContext).doubleValue();
-                    double y = new BigDecimal(Double.valueOf(stringTokenizer.nextToken())).round(mathContext).doubleValue();
+                    double x = new BigDecimal(stringTokenizer.nextToken()).round(mathContext).doubleValue();
+                    double y = new BigDecimal(stringTokenizer.nextToken()).round(mathContext).doubleValue();
                     if(stringTokenizer.hasMoreTokens()) {
-                        double z = new BigDecimal(Double.valueOf(stringTokenizer.nextToken())).round(mathContext).doubleValue();
+                        double z = new BigDecimal(stringTokenizer.nextToken()).round(mathContext).doubleValue();
                         polygonPointList.add(mkPt(x, y, z));
                     } else {
                         polygonPointList.add(mkPt(x, y));

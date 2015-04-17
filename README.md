@@ -1,6 +1,9 @@
 # Poly2Tri
 
-Contribution to poly2tri project. This is a temporary fork, in order to add various features.
+Contribution to poly2tri project:
+https://code.google.com/p/poly2tri/
+
+This is a temporary fork, in order to add various features.
 
 ## How to use
 
@@ -12,7 +15,7 @@ import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
 
 import java.util.Arrays;
 
-public class main {
+public class Main {
   public static void main(String[] args) {
     // Prepare input data
     Polygon polygon = new Polygon(Arrays.asList(new PolygonPoint(0, 0, 0),

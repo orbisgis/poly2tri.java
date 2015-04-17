@@ -4,7 +4,7 @@
     
   <dependencies>
     <dependency>
-      <groupId>org.poly2tri</groupId>
+      <groupId>org.orbisgis</groupId>
       <artifactId>poly2tri-core</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -17,7 +17,7 @@
   <name>Poly2Tri Ardor3D</name>
   <parent>
   	<artifactId>poly2tri</artifactId>
-  	<groupId>org.poly2tri</groupId>
+  	<groupId>org.orbisgis</groupId>
   	<version>0.1.1-SNAPSHOT</version>
   	<relativePath>../pom.xml</relativePath>
   </parent>

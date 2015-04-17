@@ -31,6 +31,7 @@
 package org.poly2tri.triangulation.delaunay;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.poly2tri.triangulation.TriangulationPoint;
 import org.poly2tri.triangulation.delaunay.sweep.DTSweepConstraint;
@@ -322,7 +323,26 @@ public class DelaunayTriangle
 
     public void printDebug()
     {
-        System.out.println( points[0] + "," + points[1] + "," + points[2] );
+        System.out.println(  );
+    }
+
+    @Override
+    public String toString() {
+        return points[0] + "," + points[1] + "," + points[2];
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DelaunayTriangle)) return false;
+
+        DelaunayTriangle that = (DelaunayTriangle) o;
+        return Arrays.equals(points, that.points);
+    }
+
+    @Override
+    public int hashCode() {
+        return points != null ? Arrays.hashCode(points) : 0;
     }
 
     // Finalize edge marking

@@ -99,16 +99,6 @@ public class DTSweepContext extends TriangulationContext<DTSweepDebugContext>
 //        triangle.clearNeighbors();
     }
 
-
-    private static boolean contains(Point ref, Point... pts){
-        for(Point pt : pts) {
-            if(pt.equals(ref)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     protected void meshClean(DelaunayTriangle triangle)
     {
     	DelaunayTriangle t1,t2;
@@ -130,10 +120,7 @@ public class DTSweepContext extends TriangulationContext<DTSweepDebugContext>
 	                    if( t2 != null && !t2.isInterior())
 	                    {
 	                        t2.isInterior(true);
-                            // t2 must not be created from artificial tail or queue points
-                            if(!(contains(_tail, t2.points) || contains(_head, t2.points))) {
-                                deque.addLast(t2);
-                            }
+                            deque.addLast(t2);
 	                    }
 	                }
 	            }

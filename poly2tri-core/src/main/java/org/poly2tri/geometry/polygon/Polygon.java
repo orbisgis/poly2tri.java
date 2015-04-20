@@ -1,8 +1,6 @@
 package org.poly2tri.geometry.polygon;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import org.poly2tri.triangulation.Triangulatable;
 import org.poly2tri.triangulation.TriangulationContext;
@@ -205,6 +203,13 @@ public class Polygon implements Triangulatable
         return _points;
     }
 
+    /**
+     * @return Polygon holes
+     */
+    public ArrayList<Polygon> getHoles() {
+        return _holes;
+    }
+
     public List<DelaunayTriangle> getTriangles()
     {
         return m_triangles;
@@ -228,11 +233,35 @@ public class Polygon implements Triangulatable
         }
     }
 
+    private static void mergePoints(Map<TriangulationPoint, TriangulationPoint> uniquePts, List<TriangulationPoint> ptList) {
+        for(int idPoint = 0; idPoint < ptList.size(); idPoint++) {
+            TriangulationPoint pt = ptList.get(idPoint);
+            TriangulationPoint uniquePt = uniquePts.get(pt);
+            if(uniquePt == null) {
+                uniquePts.put(pt, pt);
+            } else {
+                // Duplicate point
+                ptList.set(idPoint, uniquePt);
+            }
+        }
+    }
+
     /**
-     * Creates constraints and populates the context with points
+     * Merge equals points.
+     * Creates constraints and populates the context with points.
      */
     public void prepareTriangulation( TriangulationContext<?> tcx )
     {
+        HashMap<TriangulationPoint, TriangulationPoint> uniquePts = new HashMap<TriangulationPoint, TriangulationPoint>(_points.size());
+        mergePoints(uniquePts, _points);
+        if(_steinerPoints != null) {
+            mergePoints(uniquePts, _steinerPoints);
+        }
+        if( _holes != null ) {
+            for (Polygon p : _holes) {
+                mergePoints(uniquePts, p._points);
+            }
+        }
         if( m_triangles == null )
         {
             m_triangles = new ArrayList<DelaunayTriangle>( _points.size() );
@@ -248,7 +277,6 @@ public class Polygon implements Triangulatable
             tcx.newConstraint( _points.get( i ), _points.get( i+1 ) );
         }
         tcx.newConstraint( _points.get( 0 ), _points.get( _points.size()-1 ) );
-        tcx.addPoints( _points );
 
         // Hole constraints
         if( _holes != null )
@@ -260,14 +288,9 @@ public class Polygon implements Triangulatable
                     tcx.newConstraint( p._points.get( i ), p._points.get( i+1 ) );
                 }
                 tcx.newConstraint( p._points.get( 0 ), p._points.get( p._points.size()-1 ) );            
-                tcx.addPoints( p._points );
             }
         }
-
-        if( _steinerPoints != null )
-        {
-            tcx.addPoints( _steinerPoints );
-        }
+        tcx.addPoints(uniquePts.keySet());
     }
 
 }

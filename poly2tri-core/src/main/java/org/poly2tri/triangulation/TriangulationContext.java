@@ -31,6 +31,7 @@
 package org.poly2tri.triangulation;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
@@ -164,7 +165,7 @@ public abstract class TriangulationContext<A extends TriangulationDebugContext>
         return _debug;
     }
     
-    public void addPoints( List<TriangulationPoint> points )
+    public void addPoints( Collection<TriangulationPoint> points )
     {
         _points.addAll( points );
     }

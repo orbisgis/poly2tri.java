@@ -77,7 +77,7 @@ public class TestConstrainedDelaunay {
      * @param stringBuilder String to add to
      * @param pts Input pts
      */
-    public void addPts(StringBuilder stringBuilder, Point... pts) {
+    public static void addPts(StringBuilder stringBuilder, Point... pts) {
         AtomicBoolean first = new AtomicBoolean(true);
         for(Point pt : pts) {
             if(!first.getAndSet(false)) {
@@ -93,10 +93,37 @@ public class TestConstrainedDelaunay {
 
     /**
      * Convert triangles list into wkt form for debugging purpose
+     * @param polygon Polygon
+     * @return String WKT
+     */
+    public static String toWKT(Polygon polygon) {
+        StringBuilder stringBuilder = new StringBuilder("POLYGON((");
+        List<TriangulationPoint> pts = polygon.getPoints();
+        addPts(stringBuilder, pts.toArray(new Point[pts.size()]));
+        // Close linestring
+        stringBuilder.append(", ");
+        addPts(stringBuilder, pts.get(0));
+        stringBuilder.append(")");
+        if(!polygon.getHoles().isEmpty()) {
+            for(Polygon poly : polygon.getHoles()) {
+                stringBuilder.append(", (");
+                List<TriangulationPoint> pts2 = poly.getPoints();
+                addPts(stringBuilder, pts2.toArray(new Point[pts2.size()]));
+                // Close linestring
+                stringBuilder.append(", ");
+                addPts(stringBuilder, pts2.get(0));
+                stringBuilder.append(")");
+            }
+        }
+        stringBuilder.append(")");
+        return stringBuilder.toString();
+    }
+    /**
+     * Convert triangles list into wkt form for debugging purpose
      * @param triangles Triangle array
      * @return String WKT
      */
-    public String toWKT(List<DelaunayTriangle> triangles) {
+    public static String toWKT(List<DelaunayTriangle> triangles) {
         StringBuilder stringBuilder = new StringBuilder("MULTIPOLYGON(");
         AtomicBoolean first = new AtomicBoolean(true);
         for(DelaunayTriangle triangle : triangles) {
@@ -137,6 +164,7 @@ public class TestConstrainedDelaunay {
     public void testPolygonHoleTouchTessellation() throws IOException {
         Polygon polygon = polygonFromFile(TestConstrainedDelaunay.class.getResource("poly2.dat"));
         Poly2Tri.triangulate(polygon);
+        //LOGGER.info(toWKT(polygon));
         //LOGGER.info(toWKT(polygon.getTriangles()));
         assertEquals(7, polygon.getTriangles().size());
     }

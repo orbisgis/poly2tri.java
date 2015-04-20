@@ -44,7 +44,7 @@
  <parent>
  	<artifactId>poly2tri</artifactId>
  	<groupId>org.orbisgis</groupId>
- 	<version>0.1.1</version>
+ 	<version>0.2-SNAPSHOT</version>
  	<relativePath>../pom.xml</relativePath>
  </parent>
 

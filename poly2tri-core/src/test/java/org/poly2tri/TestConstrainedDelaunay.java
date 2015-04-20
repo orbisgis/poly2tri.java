@@ -72,6 +72,11 @@ public class TestConstrainedDelaunay {
         return polygon;
     }
 
+    /**
+     * Add WKT text of points
+     * @param stringBuilder String to add to
+     * @param pts Input pts
+     */
     public void addPts(StringBuilder stringBuilder, Point... pts) {
         AtomicBoolean first = new AtomicBoolean(true);
         for(Point pt : pts) {
@@ -86,6 +91,11 @@ public class TestConstrainedDelaunay {
         }
     }
 
+    /**
+     * Convert triangles list into wkt form for debugging purpose
+     * @param triangles Triangle array
+     * @return String WKT
+     */
     public String toWKT(List<DelaunayTriangle> triangles) {
         StringBuilder stringBuilder = new StringBuilder("MULTIPOLYGON(");
         AtomicBoolean first = new AtomicBoolean(true);
@@ -119,11 +129,15 @@ public class TestConstrainedDelaunay {
         assertEquals(122, polygon.getTriangles().size());
     }
 
+    /**
+     * Check "Banana" polygon. Polygon with a hole where hole point touch outer ring point.
+     * @throws IOException
+     */
     @Test
     public void testPolygonHoleTouchTessellation() throws IOException {
         Polygon polygon = polygonFromFile(TestConstrainedDelaunay.class.getResource("poly2.dat"));
         Poly2Tri.triangulate(polygon);
-        LOGGER.info(toWKT(polygon.getTriangles()));
+        //LOGGER.info(toWKT(polygon.getTriangles()));
         assertEquals(7, polygon.getTriangles().size());
     }
 

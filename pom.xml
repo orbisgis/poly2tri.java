@@ -35,11 +35,11 @@
   <dependencies>
   </dependencies>
 
- <scm>
-  <connection>scm:hg:https://java.poly2tri.googlecode.com/hg/</connection>
-  <developerConnection>scm:hg:https://java.poly2tri.googlecode.com/hg/</developerConnection>
-  <url>http://code.google.com/p/poly2tri/source/browse?repo=java</url>
- </scm>
+<scm>
+    <connection>scm:git:https://github.com/irstv/poly2tri.java.git</connection>
+    <developerConnection>scm:git:https://github.com/irstv/poly2tri.java.git</developerConnection>
+    <url>git@github.com:irstv/poly2tri.java.git</url>
+</scm>
 
  <issueManagement>
  	<url>http://code.google.com/p/poly2tri/issues/list</url>
@@ -141,4 +141,9 @@
   		</dependency>
   	</dependencies>
   </dependencyManagement>
+    <parent>
+        <groupId>org.orbisgis</groupId>
+        <artifactId>orbisgis-nexus</artifactId>
+        <version>1</version>
+    </parent>
 </project>

@@ -3,6 +3,11 @@ package org.poly2tri;
 import org.junit.Test;
 import org.poly2tri.geometry.polygon.Polygon;
 import org.poly2tri.geometry.polygon.PolygonPoint;
+import org.poly2tri.geometry.primitives.Point;
+import org.poly2tri.triangulation.TriangulationPoint;
+import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.math.BigDecimal;
@@ -11,6 +16,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.Assert.assertEquals;
 
@@ -19,6 +25,7 @@ import static org.junit.Assert.assertEquals;
  * @author Nicolas Fortin, CNRS 2488
  */
 public class TestConstrainedDelaunay {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestConstrainedDelaunay.class);
 
     private static PolygonPoint mkPt(double x, double y) {
         return new PolygonPoint(x, y);
@@ -27,30 +34,75 @@ public class TestConstrainedDelaunay {
         return new PolygonPoint(x, y, z);
     }
 
-    private static  List<PolygonPoint> pointsFromFile(URL dataUrl, MathContext mathContext) throws IOException {
-        List<PolygonPoint> polygonPointList = new ArrayList<PolygonPoint>();
+    private static void pointsFromFile(URL dataUrl, MathContext mathContext, List<PolygonPoint> outerRing, List<ArrayList<PolygonPoint>> holes) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new FileReader(dataUrl.getFile()));
+        List<PolygonPoint> polygonPointList = outerRing;
         try {
-            try {
-                String line;
-                while ((line = bufferedReader.readLine()) != null) {
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                if(line.isEmpty()) {
+                    ArrayList<PolygonPoint> hole = new ArrayList<PolygonPoint>();
+                    holes.add(hole);
+                    polygonPointList = hole;
+                } else {
                     StringTokenizer stringTokenizer = new StringTokenizer(line, " ");
                     double x = new BigDecimal(stringTokenizer.nextToken()).round(mathContext).doubleValue();
                     double y = new BigDecimal(stringTokenizer.nextToken()).round(mathContext).doubleValue();
-                    if(stringTokenizer.hasMoreTokens()) {
+                    if (stringTokenizer.hasMoreTokens()) {
                         double z = new BigDecimal(stringTokenizer.nextToken()).round(mathContext).doubleValue();
                         polygonPointList.add(mkPt(x, y, z));
                     } else {
                         polygonPointList.add(mkPt(x, y));
                     }
                 }
-            } finally {
-                bufferedReader.close();
             }
-            return polygonPointList;
         } finally {
             bufferedReader.close();
         }
+    }
+
+    private Polygon polygonFromFile(URL file) throws IOException {
+        List<PolygonPoint> outerRing = new ArrayList<PolygonPoint>();
+        List<ArrayList<PolygonPoint>> holes = new ArrayList<ArrayList<PolygonPoint>>();
+        pointsFromFile(file, MathContext.DECIMAL64, outerRing, holes);
+        Polygon polygon = new Polygon(outerRing);
+        for(List<PolygonPoint> hole : holes) {
+            polygon.addHole(new Polygon(hole));
+        }
+        return polygon;
+    }
+
+    public void addPts(StringBuilder stringBuilder, Point... pts) {
+        AtomicBoolean first = new AtomicBoolean(true);
+        for(Point pt : pts) {
+            if(!first.getAndSet(false)) {
+                stringBuilder.append(", ");
+            }
+            stringBuilder.append(pt.getX());
+            stringBuilder.append(" ");
+            stringBuilder.append(pt.getY());
+            stringBuilder.append(" ");
+            stringBuilder.append(pt.getZ());
+        }
+    }
+
+    public String toWKT(List<DelaunayTriangle> triangles) {
+        StringBuilder stringBuilder = new StringBuilder("MULTIPOLYGON(");
+        AtomicBoolean first = new AtomicBoolean(true);
+        for(DelaunayTriangle triangle : triangles) {
+            if(!first.getAndSet(false)) {
+                stringBuilder.append(",");
+            }
+            stringBuilder.append("((");
+            TriangulationPoint[] pts = triangle.points;
+            addPts(stringBuilder, pts);
+            // Close linestring
+            stringBuilder.append(", ");
+            addPts(stringBuilder, pts[0]);
+            stringBuilder.append("))");
+        }
+        stringBuilder.append(")");
+        return stringBuilder.toString();
     }
 
     /**
@@ -62,10 +114,17 @@ public class TestConstrainedDelaunay {
      */
     @Test
     public void testPolygonTessellation() throws IOException {
-        List<PolygonPoint> pts = pointsFromFile(TestConstrainedDelaunay.class.getResource("poly1.dat"), MathContext.DECIMAL64);
-        Polygon polygon = new Polygon(pts);
+        Polygon polygon = polygonFromFile(TestConstrainedDelaunay.class.getResource("poly1.dat"));
         Poly2Tri.triangulate(polygon);
         assertEquals(122, polygon.getTriangles().size());
+    }
+
+    @Test
+    public void testPolygonHoleTouchTessellation() throws IOException {
+        Polygon polygon = polygonFromFile(TestConstrainedDelaunay.class.getResource("poly2.dat"));
+        Poly2Tri.triangulate(polygon);
+        LOGGER.info(toWKT(polygon.getTriangles()));
+        assertEquals(7, polygon.getTriangles().size());
     }
 
 }

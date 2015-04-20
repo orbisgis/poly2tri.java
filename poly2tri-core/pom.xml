@@ -41,12 +41,6 @@
           <scope>test</scope>
       </dependency>
   </dependencies>
-
- <scm>
-  <connection>scm:hg:https://java.poly2tri.googlecode.com/hg/poly2tri-core</connection>
-  <developerConnection>scm:hg:https://java.poly2tri.googlecode.com/hg/poly2tri-core</developerConnection>
-  <url>http://code.google.com/p/poly2tri/source/browse?repo=java</url>
- </scm>
  <parent>
  	<artifactId>poly2tri</artifactId>
  	<groupId>org.orbisgis</groupId>

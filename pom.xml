@@ -27,11 +27,11 @@
   </developers>
   <modules>
   	<module>poly2tri-core</module>
-  	<module>poly2tri-ardor3d</module>
-  	<module>poly2tri-examples</module>
-  	<module>poly2tri-examples-geotools</module>
-  </modules>  
-  
+    <!-- <module>poly2tri-ardor3d</module> -->
+    <!-- <module>poly2tri-examples</module> -->
+    <!-- <module>poly2tri-examples-geotools</module> -->
+  </modules>
+
   <dependencies>
   </dependencies>
 
@@ -42,7 +42,7 @@
 </scm>
 
  <issueManagement>
- 	<url>http://code.google.com/p/poly2tri/issues/list</url>
+     <url>http://code.google.com/p/poly2tri/issues/list</url>
  </issueManagement>
 
   <build>

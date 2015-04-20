@@ -31,6 +31,7 @@
 package org.poly2tri.triangulation.sets;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -88,6 +89,10 @@ public class ConstrainedPointSet extends PointSet
         super.prepareTriangulation( tcx );
         if( _constrainedPointList != null )
         {
+            HashMap<TriangulationPoint, TriangulationPoint> uniquePts = new HashMap<TriangulationPoint, TriangulationPoint>(_points.size());
+            // Enforce same coordinates means same instance of TriangulationPoint
+            TriangulationPoint.mergeInstances(uniquePts, _points);
+            TriangulationPoint.mergeInstances(uniquePts, _constrainedPointList);
         	TriangulationPoint p1,p2;
         	Iterator iterator = _constrainedPointList.iterator();
     		while(iterator.hasNext())

@@ -126,11 +126,7 @@ public class Polygon implements Triangulatable
     }
 
     /**
-     * Will insert a point in the polygon after given point 
-     * 
-     * @param a
-     * @param b
-     * @param p
+     * Will insert a point in the polygon after given point
      */
     public void insertPointAfter( PolygonPoint a, PolygonPoint newPoint )
     {
@@ -217,7 +213,7 @@ public class Polygon implements Triangulatable
     
     public void addTriangle( DelaunayTriangle t )
     {
-        m_triangles.add( t );
+        m_triangles.add(t);
     }
 
     public void addTriangles( List<DelaunayTriangle> list )
@@ -233,33 +229,29 @@ public class Polygon implements Triangulatable
         }
     }
 
-    private static void mergePoints(Map<TriangulationPoint, TriangulationPoint> uniquePts, List<TriangulationPoint> ptList) {
-        for(int idPoint = 0; idPoint < ptList.size(); idPoint++) {
-            TriangulationPoint pt = ptList.get(idPoint);
-            TriangulationPoint uniquePt = uniquePts.get(pt);
-            if(uniquePt == null) {
-                uniquePts.put(pt, pt);
-            } else {
-                // Duplicate point
-                ptList.set(idPoint, uniquePt);
-            }
-        }
-    }
-
     /**
      * Merge equals points.
      * Creates constraints and populates the context with points.
      */
     public void prepareTriangulation( TriangulationContext<?> tcx )
     {
-        HashMap<TriangulationPoint, TriangulationPoint> uniquePts = new HashMap<TriangulationPoint, TriangulationPoint>(_points.size());
-        mergePoints(uniquePts, _points);
+        int hint = _points.size();
         if(_steinerPoints != null) {
-            mergePoints(uniquePts, _steinerPoints);
+            hint += _steinerPoints.size();
         }
         if( _holes != null ) {
             for (Polygon p : _holes) {
-                mergePoints(uniquePts, p._points);
+                hint += p.pointCount();
+            }
+        }
+        HashMap<TriangulationPoint, TriangulationPoint> uniquePts = new HashMap<TriangulationPoint, TriangulationPoint>(hint);
+        TriangulationPoint.mergeInstances(uniquePts, _points);
+        if(_steinerPoints != null) {
+            TriangulationPoint.mergeInstances(uniquePts, _steinerPoints);
+        }
+        if( _holes != null ) {
+            for (Polygon p : _holes) {
+                TriangulationPoint.mergeInstances(uniquePts, p._points);
             }
         }
         if( m_triangles == null )

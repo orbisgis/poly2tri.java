@@ -31,6 +31,8 @@
 package org.poly2tri.triangulation;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import org.poly2tri.geometry.primitives.Point;
 import org.poly2tri.triangulation.delaunay.sweep.DTSweepConstraint;
@@ -109,4 +111,22 @@ public abstract class TriangulationPoint extends Point
         return (((int) bits) ^ ((int) (bits >> 32)));
     }
 
+
+    /**
+     * Replace points in ptList for all equals object in uniquePts.
+     * @param uniquePts Map of triangulation points
+     * @param ptList Point list, updated, but always the same size.
+     */
+    public static void mergeInstances(Map<TriangulationPoint, TriangulationPoint> uniquePts, List<TriangulationPoint> ptList) {
+        for(int idPoint = 0; idPoint < ptList.size(); idPoint++) {
+            TriangulationPoint pt = ptList.get(idPoint);
+            TriangulationPoint uniquePt = uniquePts.get(pt);
+            if(uniquePt == null) {
+                uniquePts.put(pt, pt);
+            } else {
+                // Duplicate point
+                ptList.set(idPoint, uniquePt);
+            }
+        }
+    }
 }

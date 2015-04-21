@@ -30,10 +30,7 @@
  */
 package org.poly2tri.triangulation.sets;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import org.poly2tri.triangulation.TriangulationContext;
 import org.poly2tri.triangulation.TriangulationMode;
@@ -52,6 +49,25 @@ public class ConstrainedPointSet extends PointSet
 {
     int[] _index;
     List<TriangulationPoint> _constrainedPointList = null;
+
+
+    /**
+     * LineSegments constructor
+     * @param lineSegments Array of line segments. ex: [[P0 P1] [P1 P2] [P2 P3]]
+     */
+    public ConstrainedPointSet( List<TriangulationPoint> lineSegments ) throws IllegalArgumentException {
+        super(new ArrayList<TriangulationPoint>(merge(lineSegments)));
+        if(lineSegments.size() % 2 != 0) {
+            throw new IllegalArgumentException("Line segment array should contain a pair number of elements");
+        }
+        _constrainedPointList = new ArrayList<TriangulationPoint>(lineSegments);
+    }
+
+    private static Collection<TriangulationPoint> merge(List<TriangulationPoint> lineString) {
+        HashMap<TriangulationPoint, TriangulationPoint> uniquePts = new HashMap<TriangulationPoint, TriangulationPoint>(lineString.size());
+        TriangulationPoint.mergeInstances(uniquePts, lineString);
+        return uniquePts.keySet();
+    }
 
     public ConstrainedPointSet( List<TriangulationPoint> points, int[] index )
     {

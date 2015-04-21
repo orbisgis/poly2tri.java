@@ -6,6 +6,7 @@ import org.poly2tri.geometry.polygon.PolygonPoint;
 import org.poly2tri.geometry.primitives.Point;
 import org.poly2tri.triangulation.TriangulationPoint;
 import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
+import org.poly2tri.triangulation.sets.ConstrainedPointSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +60,13 @@ public class TestConstrainedDelaunay {
         } finally {
             bufferedReader.close();
         }
+    }
+
+    private ConstrainedPointSet LineSegsFromFile(URL file) throws IOException {
+        List<PolygonPoint> outerRing = new ArrayList<PolygonPoint>();
+        List<ArrayList<PolygonPoint>> holes = new ArrayList<ArrayList<PolygonPoint>>();
+        pointsFromFile(file, MathContext.DECIMAL64, outerRing, holes);
+        return new ConstrainedPointSet(new ArrayList<TriangulationPoint>(outerRing));
     }
 
     private Polygon polygonFromFile(URL file) throws IOException {
@@ -169,4 +177,15 @@ public class TestConstrainedDelaunay {
         assertEquals(7, polygon.getTriangles().size());
     }
 
+    /**
+     * Check convex hull triangulation delaunay
+     * @throws IOException
+     */
+    @Test
+    public void testLineConstraints() throws IOException {
+        ConstrainedPointSet segs = LineSegsFromFile(TestConstrainedDelaunay.class.getResource("linesegs1.dat"));
+        Poly2Tri.triangulate(segs);
+        //LOGGER.info(toWKT(segs.getTriangles()));
+        assertEquals(8, segs.getTriangles().size());
+    }
 }

@@ -31,6 +31,7 @@
 package org.poly2tri.triangulation.sets;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.poly2tri.triangulation.Triangulatable;
@@ -44,7 +45,7 @@ public class PointSet implements Triangulatable
     List<TriangulationPoint> _points;
     List<DelaunayTriangle> _triangles;
     
-    public PointSet( List<TriangulationPoint> points )
+    public PointSet( Collection<TriangulationPoint> points )
     {
         _points = new ArrayList<TriangulationPoint>();
         _points.addAll( points );

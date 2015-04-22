@@ -14,9 +14,7 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.Assert.assertEquals;
@@ -66,7 +64,30 @@ public class TestConstrainedDelaunay {
         List<PolygonPoint> outerRing = new ArrayList<PolygonPoint>();
         List<ArrayList<PolygonPoint>> holes = new ArrayList<ArrayList<PolygonPoint>>();
         pointsFromFile(file, MathContext.DECIMAL64, outerRing, holes);
-        return new ConstrainedPointSet(new ArrayList<TriangulationPoint>(outerRing));
+        if(outerRing.size() % 2 != 0) {
+            throw new IOException("Line segments size should be even");
+        }
+        Map<PolygonPoint, Integer> mergedPoints = new HashMap<PolygonPoint, Integer>(outerRing.size());
+        int[] segments = new int[outerRing.size()];
+        int index = 0;
+        List<TriangulationPoint> pts = new ArrayList<TriangulationPoint>(outerRing.size());
+        for(int rangeBegin = 0; rangeBegin < outerRing.size() - 1; rangeBegin++) {
+            Integer firstRef = mergedPoints.get(outerRing.get(rangeBegin));
+            if(firstRef == null) {
+                firstRef = index++;
+                mergedPoints.put(outerRing.get(rangeBegin), firstRef);
+                pts.add(outerRing.get(rangeBegin));
+            }
+            segments[rangeBegin] = firstRef;
+            firstRef = mergedPoints.get(outerRing.get(rangeBegin + 1));
+            if(firstRef == null) {
+                firstRef = index++;
+                mergedPoints.put(outerRing.get(rangeBegin + 1), firstRef);
+                pts.add(outerRing.get(rangeBegin + 1));
+            }
+            segments[rangeBegin + 1] = firstRef;
+        }
+        return new ConstrainedPointSet(pts, segments);
     }
 
     private Polygon polygonFromFile(URL file) throws IOException {
@@ -187,5 +208,16 @@ public class TestConstrainedDelaunay {
         Poly2Tri.triangulate(segs);
         //LOGGER.info(toWKT(segs.getTriangles()));
         assertEquals(8, segs.getTriangles().size());
+    }
+    /**
+     * Check convex hull triangulation delaunay
+     * @throws IOException
+     */
+    @Test
+    public void testLineConstraints2() throws IOException {
+        ConstrainedPointSet segs = LineSegsFromFile(TestConstrainedDelaunay.class.getResource("linesegs2.dat"));
+        Poly2Tri.triangulate(segs);
+        //LOGGER.info(toWKT(segs.getTriangles()));
+        assertEquals(7, segs.getTriangles().size());
     }
 }

@@ -67,11 +67,19 @@ public class Poly2Tri
         triangulate( _defaultAlgorithm, p );            
     }
 
+    /**
+     * Warning delaunay triangulation produced may not be convex.
+     * @param cps LineSegments to triangulate
+     */
     public static void triangulate( ConstrainedPointSet cps )
     {
         triangulate( _defaultAlgorithm, cps );        
     }
 
+    /**
+     * Warning delaunay triangulation produced may not be convex.
+     * @param ps Point set
+     */
     public static void triangulate( PointSet ps )
     {
         triangulate( _defaultAlgorithm, ps );                

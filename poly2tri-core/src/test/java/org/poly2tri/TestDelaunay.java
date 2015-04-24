@@ -95,4 +95,17 @@ public class TestDelaunay {
             assertTrue("Could not find "+tri, expectedTriangles.contains(tri));
         }
     }
+
+    //@Test
+    // Produced triangulation is not convex
+    public void testConvexHullProblem() {
+        TriangulationPoint[] pts = new TriangulationPoint[] {
+                mkPt(4, 7),
+                mkPt(3.2, 4.6),
+                mkPt(4.1, 5.2),
+                mkPt(6, 5)};
+        PointSet ps = new PointSet(Arrays.asList(pts));
+        Poly2Tri.triangulate(ps);
+        assertEquals(3, ps.getTriangles().size());
+    }
 }

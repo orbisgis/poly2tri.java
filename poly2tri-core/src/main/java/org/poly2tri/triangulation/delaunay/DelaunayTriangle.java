@@ -33,6 +33,7 @@ package org.poly2tri.triangulation.delaunay;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.poly2tri.geometry.primitives.Edge;
 import org.poly2tri.triangulation.TriangulationPoint;
 import org.poly2tri.triangulation.delaunay.sweep.DTSweepConstraint;
 import org.poly2tri.triangulation.point.TPoint;
@@ -43,6 +44,8 @@ import org.slf4j.LoggerFactory;
 public class DelaunayTriangle
 {
     private final static Logger logger    = LoggerFactory.getLogger( DelaunayTriangle.class );
+    private static final int[] next = new int[] {1, 2, 0};
+    private static final int[] previous = new int[] {2, 0, 1};
 
     /** Neighbor pointers */
     public final DelaunayTriangle[]   neighbors = new DelaunayTriangle[3];
@@ -709,5 +712,51 @@ public class DelaunayTriangle
     public void isInterior( boolean b )
     {
         interior = b;        
+    }
+
+    public Edge<TriangulationPoint> getEdge(int edge) {
+        switch (edge) {
+            case 0:
+                return new TriangleEdge(points[1], points[2]);
+            case 1:
+                return new TriangleEdge(points[2], points[0]);
+            default:
+                return new TriangleEdge(points[0], points[1]);
+        }
+    }
+
+    public double getAngle(int corner) {
+        switch (corner) {
+            case 0:
+                return Edge.angle(points[0], points[1], points[2]);
+            case 1:
+                return Edge.angle(points[1], points[2], points[0]);
+            default:
+                return Edge.angle(points[2], points[0], points[1]);
+        }
+    }
+
+    /**
+     * @return The smallest angle with are not constrained by two linked constraint edge
+     */
+    public double getSmalledNonConstrainedAngle() {
+        double minAngle = Double.MAX_VALUE;
+        for(int i = 0; i < 3; i++) {
+            // Check angle if at least one of vertex edge is linked with a free edge
+            if(!cEdge[previous[i]] || !cEdge[next[i]]) {
+                double angle = getAngle(i);
+                if(angle < minAngle) {
+                    minAngle = angle;
+                }
+            }
+        }
+        return minAngle;
+    }
+
+    private static class TriangleEdge extends Edge<TriangulationPoint> {
+        public TriangleEdge(TriangulationPoint p, TriangulationPoint q) {
+            this.p = p;
+            this.q = q;
+        }
     }
 }

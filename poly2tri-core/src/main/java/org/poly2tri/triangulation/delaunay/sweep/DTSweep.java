@@ -37,6 +37,7 @@ import static org.poly2tri.triangulation.TriangulationUtil.smartIncircle;
 
 import java.util.List;
 
+import org.poly2tri.geometry.primitives.Edge;
 import org.poly2tri.triangulation.TriangulationMode;
 import org.poly2tri.triangulation.TriangulationPoint;
 import org.poly2tri.triangulation.TriangulationUtil.Orientation;
@@ -1104,13 +1105,7 @@ public class DTSweep
          * Where x = ax*bx + ay*by
          *       y = ax*by - ay*bx
          */
-        final double px = p.getX();
-        final double py = p.getY();
-        final double ax = a.getX() - px;
-        final double ay = a.getY() - py;
-        final double bx = b.getX() - px;
-        final double by = b.getY() - py;
-        return Math.atan2( ax*by - ay*bx, ax*bx + ay*by );
+        return Edge.angle(p, a, b);
     }
 
     /**

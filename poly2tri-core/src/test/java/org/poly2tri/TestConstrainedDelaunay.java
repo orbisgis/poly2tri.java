@@ -33,7 +33,7 @@ public class TestConstrainedDelaunay {
         return new PolygonPoint(x, y, z);
     }
 
-    private static void pointsFromFile(URL dataUrl, MathContext mathContext, List<PolygonPoint> outerRing, List<ArrayList<PolygonPoint>> holes) throws IOException {
+    protected static void pointsFromFile(URL dataUrl, MathContext mathContext, List<PolygonPoint> outerRing, List<ArrayList<PolygonPoint>> holes) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new FileReader(dataUrl.getFile()));
         List<PolygonPoint> polygonPointList = outerRing;
         try {
@@ -60,7 +60,7 @@ public class TestConstrainedDelaunay {
         }
     }
 
-    private ConstrainedPointSet LineSegsFromFile(URL file) throws IOException {
+    protected ConstrainedPointSet LineSegsFromFile(URL file) throws IOException {
         List<PolygonPoint> outerRing = new ArrayList<PolygonPoint>();
         List<ArrayList<PolygonPoint>> holes = new ArrayList<ArrayList<PolygonPoint>>();
         pointsFromFile(file, MathContext.DECIMAL64, outerRing, holes);
@@ -90,7 +90,7 @@ public class TestConstrainedDelaunay {
         return new ConstrainedPointSet(pts, segments);
     }
 
-    private Polygon polygonFromFile(URL file) throws IOException {
+    protected static Polygon polygonFromFile(URL file) throws IOException {
         List<PolygonPoint> outerRing = new ArrayList<PolygonPoint>();
         List<ArrayList<PolygonPoint>> holes = new ArrayList<ArrayList<PolygonPoint>>();
         pointsFromFile(file, MathContext.DECIMAL64, outerRing, holes);

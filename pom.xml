@@ -3,7 +3,7 @@
   <groupId>org.orbisgis</groupId>
   <artifactId>poly2tri</artifactId>
   <name>Poly2Tri</name>
-  <version>0.2-SNAPSHOT</version>
+  <version>0.1.2</version>
   <description>Delaunay Triangulation Library</description>
   <packaging>pom</packaging>
   <url>http://code.google.com/p/poly2tri/</url>

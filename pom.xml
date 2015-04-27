@@ -24,6 +24,10 @@
   			<role>Java Developer</role>
   		</roles>
   	</developer>
+      <developer>
+          <name>Nicolas Fortin</name>
+          <organization>IRSTV CNRS-FR-2488</organization>
+      </developer>
   </developers>
   <modules>
   	<module>poly2tri-core</module>

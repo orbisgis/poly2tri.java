@@ -1,6 +1,6 @@
 package org.poly2tri.geometry.primitives;
 
-public abstract class Point
+public abstract class Point implements Comparable<Point>
 {
     public abstract double getX();
     public abstract double getY();
@@ -27,5 +27,35 @@ public abstract class Point
 
         return result;
         
+    }
+
+    @Override
+    public int hashCode() {
+        return calculateHashCode(getX(), getY(), getZ());
+    }
+
+    @Override
+    public int compareTo(Point other) {
+        if(other == null) {
+            return 1;
+        }
+        if (getX() < other.getX()) return -1;
+        if (getX() > other.getX()) return 1;
+        if (getY() < other.getY()) return -1;
+        if (getY() > other.getY()) return 1;
+        return 0;
+    }
+
+    /**
+     * Compute distance to another point
+     * @param p2 Other point
+     * @return Distance
+     */
+    public double distance(Point p2) {
+        double dx = getX() - p2.getX();
+        double dy = getY() - p2.getY();
+        double dz = getZ() - p2.getZ();
+
+        return Math.sqrt(dx * dx + dy * dy + dz * dz);
     }
 }

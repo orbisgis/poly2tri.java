@@ -19,4 +19,9 @@ public interface Triangulatable
     public void clearTriangulation();
     
     public TriangulationMode getTriangulationMode();
+
+    /**
+     * @return Quality evaluator or null if no refinement has to be done.
+     */
+    public QualityEvaluator getQualityEvaluator();
 }

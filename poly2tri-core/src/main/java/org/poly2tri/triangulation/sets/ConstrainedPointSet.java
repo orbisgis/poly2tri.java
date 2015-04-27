@@ -32,6 +32,7 @@ package org.poly2tri.triangulation.sets;
 
 import java.util.*;
 
+import org.poly2tri.triangulation.QualityEvaluator;
 import org.poly2tri.triangulation.TriangulationContext;
 import org.poly2tri.triangulation.TriangulationMode;
 import org.poly2tri.triangulation.TriangulationPoint;
@@ -47,8 +48,8 @@ import org.poly2tri.triangulation.TriangulationPoint;
  */
 public class ConstrainedPointSet extends PointSet
 {
-    int[] _index;
-    List<TriangulationPoint> _constrainedPointList = null;
+    private int[] _index;
+    private List<TriangulationPoint> _constrainedPointList = null;
 
     public ConstrainedPointSet( List<TriangulationPoint> points, int[] index )
     {

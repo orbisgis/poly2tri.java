@@ -714,6 +714,13 @@ public class DelaunayTriangle
         interior = b;        
     }
 
+    /**
+     * @return Edges of this triangle
+     */
+    public Edge[] getEdges() {
+        return new TriangleEdge[] {(TriangleEdge)getEdge(0),(TriangleEdge)getEdge(1),(TriangleEdge)getEdge(2)};
+    }
+
     public Edge<TriangulationPoint> getEdge(int edge) {
         switch (edge) {
             case 0:

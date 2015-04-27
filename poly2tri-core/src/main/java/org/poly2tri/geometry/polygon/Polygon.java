@@ -2,10 +2,7 @@ package org.poly2tri.geometry.polygon;
 
 import java.util.*;
 
-import org.poly2tri.triangulation.Triangulatable;
-import org.poly2tri.triangulation.TriangulationContext;
-import org.poly2tri.triangulation.TriangulationMode;
-import org.poly2tri.triangulation.TriangulationPoint;
+import org.poly2tri.triangulation.*;
 import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +16,7 @@ public class Polygon implements Triangulatable
     protected ArrayList<Polygon> _holes;
 
     protected List<DelaunayTriangle> m_triangles;
+    protected QualityEvaluator qualityEvaluator;
 
     protected PolygonPoint _last;
 
@@ -40,6 +38,18 @@ public class Polygon implements Triangulatable
         _points.add( p1 );
         _points.add( p2 );
         _points.add( p3 );
+    }
+
+    @Override
+    public QualityEvaluator getQualityEvaluator() {
+        return qualityEvaluator;
+    }
+
+    /**
+     * @param qualityEvaluator Quality evaluator or null if no refinement has to be done.
+     */
+    public void setQualityEvaluator(QualityEvaluator qualityEvaluator) {
+        this.qualityEvaluator = qualityEvaluator;
     }
 
     /**

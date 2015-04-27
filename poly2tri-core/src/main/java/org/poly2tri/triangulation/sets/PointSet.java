@@ -34,19 +34,22 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.poly2tri.triangulation.Triangulatable;
-import org.poly2tri.triangulation.TriangulationContext;
-import org.poly2tri.triangulation.TriangulationMode;
-import org.poly2tri.triangulation.TriangulationPoint;
+import org.poly2tri.triangulation.*;
 import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
 
 public class PointSet implements Triangulatable
 {
     List<TriangulationPoint> _points;
     List<DelaunayTriangle> _triangles;
+    protected QualityEvaluator qualityEvaluator = null;
     
     public PointSet( Collection<TriangulationPoint> points )
     {
+        this(points, null);
+    }
+    public PointSet( Collection<TriangulationPoint> points , QualityEvaluator qualityEvaluator)
+    {
+        this.qualityEvaluator = qualityEvaluator;
         _points = new ArrayList<TriangulationPoint>();
         _points.addAll( points );
     }
@@ -92,5 +95,14 @@ public class PointSet implements Triangulatable
             _triangles.clear();                        
         }
         tcx.addPoints( _points );
+    }
+
+    public void setQualityEvaluator(QualityEvaluator qualityEvaluator) {
+        this.qualityEvaluator = qualityEvaluator;
+    }
+
+    @Override
+    public QualityEvaluator getQualityEvaluator() {
+        return qualityEvaluator;
     }
 }

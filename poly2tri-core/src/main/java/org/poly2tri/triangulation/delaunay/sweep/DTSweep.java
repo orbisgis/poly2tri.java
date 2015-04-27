@@ -35,7 +35,7 @@ import static org.poly2tri.triangulation.TriangulationUtil.inScanArea;
 import static org.poly2tri.triangulation.TriangulationUtil.orient2d;
 import static org.poly2tri.triangulation.TriangulationUtil.smartIncircle;
 
-import java.util.List;
+import java.util.*;
 
 import org.poly2tri.geometry.primitives.Edge;
 import org.poly2tri.triangulation.TriangulationMode;
@@ -81,8 +81,40 @@ public class DTSweep
             finalizationConvexHull( tcx );
         }
 
+        if(tcx.getTriangulatable().getQualityEvaluator() != null) {
+            // Refinement
+            refinement( tcx );
+        }
+
         tcx.done();
     }
+
+    /**
+     * Refinement of delaunay triangulation
+     * @param tcx Triangulation context
+     */
+    private static void refinement( DTSweepContext tcx ) {
+        // 1: Fetch all encroached segments
+        Map<Edge, EdgeIdentifier> segmentsToProcess = new HashMap<Edge, EdgeIdentifier>();
+        for(DelaunayTriangle t : tcx.getTriangles()) {
+            if(t.isInterior()) {
+                for(short edgeId = 0; edgeId < 3; edgeId++) {
+                    Edge edge = t.getEdge(edgeId);
+                    edge.normalize();
+                    segmentsToProcess.put(edge, new EdgeIdentifier(t, edgeId));
+                }
+            }
+        }
+        // TODO process
+        // Delaunay Refinement Algorithms for Triangular Mesh Generation Jonathan Richard Shewchuk  May 21, 2001
+        // p.47 Terminator
+
+    }
+
+    private void splitSegments(DTSweepContext tcx, List<Edge> encroachedSegments) {
+
+    }
+
 
     /**
      * Start sweeping the Y-sorted point set from bottom to top
@@ -1079,11 +1111,7 @@ public class DTSweep
         {
             height = tcx.basin.rightNode.getPoint().getY() - node.getPoint().getY();            
         }
-        if( tcx.basin.width > height ) 
-        {
-            return true;
-        }        
-        return false;
+        return tcx.basin.width > height;
     }
     
     /**
@@ -1289,5 +1317,15 @@ public class DTSweep
         if( n3 != null ) t.markNeighbor( n3 );
         if( n4 != null ) ot.markNeighbor( n4 );
         t.markNeighbor( ot );
-    }    
+    }
+
+    private static class EdgeIdentifier {
+        public final DelaunayTriangle triangle;
+        public final short edgeId;
+
+        public EdgeIdentifier(DelaunayTriangle triangle, short edgeId) {
+            this.triangle = triangle;
+            this.edgeId = edgeId;
+        }
+    }
 }

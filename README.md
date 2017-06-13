@@ -1,7 +1,7 @@
 # Poly2Tri
 
 Contribution to poly2tri project:
-https://code.google.com/p/poly2tri/
+https://github.com/greenm01/poly2tri.java
 
 This is a temporary fork, in order to add various features.
 
